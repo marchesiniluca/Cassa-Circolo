@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartCassa Pro - Configurazione Stampe & Layout</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/8634/8634075.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-main: #f8fafc;
+            --surface: #ffffff;
+            --border: #e2e8f0;
+            --border-hover: #cbd5e1;
+            --border-focus: #0f172a;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --text-light: #94a3b8;
+            --input-bg: #f8fafc;
+            
+            --primary: #0f172a;
+            --primary-hover: #1e293b;
+            --success: #10b981;
+            --success-dim: #ecfdf5;
+            --info: #3b82f6;
+            --info-dim: #eff6ff;
+            --warning: #f59e0b;
+            --warning-dim: #fffbeb;
+            --danger: #ef4444;
+            --danger-dim: #fef2f2;
+            
+            --radius-lg: 16px;
+            --radius-md: 10px;
+            --radius-sm: 6px;
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+        }
+
+        body.dark-mode {
+            --bg-main: #0f172a;
+            --surface: #1e293b;
+            --border: #334155;
+            --border-hover: #475569;
+            --border-focus: #94a3b8;
+            --text-main: #f8fafc;
+            --text-muted: #cbd5e1;
+            --text-light: #64748b;
+            --input-bg: #0f172a;
+            
+            --primary: #3b82f6;
+            --primary-hover: #60a5fa;
+            --success-dim: rgba(16, 185, 129, 0.15);
+            --info-dim: rgba(59, 130, 246, 0.15);
+            --warning-dim: rgba(245, 158, 11, 0.15);
+            --danger-dim: rgba(239, 68, 68, 0.15);
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+        }
+
+        html { scroll-behavior: smooth; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; letter-spacing: -0.01em; }
+        body { background-color: var(--bg-main); color: var(--text-main); display: flex; flex-direction: column; min-height: 100vh; -webkit-font-smoothing: antialiased; transition: background-color 0.3s, color 0.3s; }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+        
+        header { background: var(--surface); padding: 0.75rem 2rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); box-shadow: var(--shadow-sm); flex-wrap: wrap; gap: 1rem; position: sticky; top: 0; z-index: 100; transition: background-color 0.3s, border-color 0.3s; }
+        
+        .brand { display: flex; align-items: center; gap: 0.5rem; }
+        .brand h1 { font-size: 1.15rem; font-weight: 800; color: var(--text-main); }
+        .brand span { background: var(--success-dim); color: var(--success); padding: 0.2rem 0.5rem; border-radius: var(--radius-sm); font-size: 0.65rem; font-weight: 700; text-transform: uppercase; }
+        
+        .nav-buttons { display: flex; gap: 0.35rem; background: var(--border); padding: 0.30rem; border-radius: var(--radius-lg); }
+        .btn-nav { background: transparent; border: none; color: var(--text-muted); padding: 0.6rem 1.2rem; border-radius: calc(var(--radius-lg) - 4px); font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); display: flex; align-items: center; gap: 0.5rem; }
+        .btn-nav:hover:not(.active) { color: var(--text-main); background: rgba(255, 255, 255, 0.1); }
+        .btn-nav.active { background: var(--surface); color: var(--text-main); box-shadow: var(--shadow-sm); font-weight: 700; }
+        
+        .header-tools { display: flex; align-items: center; gap: 0.75rem; }
+        .selettore-carta-global { background: var(--surface); border: 1px solid var(--border); padding: 0.45rem 0.75rem; font-size: 0.82rem; font-weight: 700; border-radius: var(--radius-md); color: var(--text-main); cursor: pointer; outline: none; box-shadow: var(--shadow-sm); transition: all 0.2s; }
+        .selettore-carta-global:hover { border-color: var(--border-hover); }
+        .theme-toggle { background: var(--border); border: none; font-size: 1.1rem; cursor: pointer; padding: 0.4rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; }
+        #data-ora { font-weight: 500; color: var(--text-muted); font-size: 0.8rem; background: var(--input-bg); padding: 0.4rem 0.8rem; border-radius: var(--radius-md); border: 1px solid var(--border); }
+
+        .window-pane { display: none; padding: 1.5rem 2rem; flex: 1; max-width: 1750px; width: 100%; margin: 0 auto; animation: fadeIn 0.2s ease-out; }
+        .window-pane.active { display: flex; gap: 1.5rem; align-items: flex-start; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+        .menu-container { flex: 2; display: flex; flex-direction: column; gap: 1.25rem; width: 100%; }
+        .sezione-blocco { background: var(--surface); padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-sm); transition: background-color 0.3s, border-color 0.3s; }
+        .titolo-sezione { font-size: 0.85rem; font-weight: 700; margin-bottom: 1rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; justify-content: space-between; }
+        
+        .barra-filtri-banco { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
+        .tab-filtro { padding: 0.5rem 1rem; border: 1px solid var(--border); background: var(--surface); border-radius: var(--radius-sm); font-size: 0.82rem; font-weight: 600; color: var(--text-muted); cursor: pointer; transition: all 0.2s; }
+        .tab-filtro.active { background: var(--primary); color: white; border-color: var(--primary) !important; }
+
+        .grid-prodotti { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 0.75rem; }
+        .card-prodotto { border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem; display: flex; flex-direction: column; justify-content: space-between; background: var(--surface); cursor: pointer; min-height: 115px; user-select: none; transition: all 0.15s ease; }
+        .card-prodotto:hover:not(.esaurito) { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+        .card-prodotto.esaurito { opacity: 0.35; cursor: not-allowed; border-style: dashed !important; background: var(--input-bg) !important; }
+        
+        .nome-prodotto { font-weight: 700; font-size: 0.85rem; line-height: 1.3; color: var(--text-main); }
+        .prezzo-prodotto { font-weight: 800; font-size: 0.95rem; color: var(--text-main); margin-top: auto; padding-top: 0.4rem; text-align: right; }
+        .scorta-prodotto { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); margin-top: 0.2rem; display: block; }
+        .scorta-prodotto.low { color: var(--danger); font-weight: 700; }
+
+        .comanda-container { flex: 1; max-width: 420px; width: 100%; background: var(--surface); border-radius: var(--radius-lg); padding: 1.5rem; border: 1px solid var(--border); box-shadow: var(--shadow-md); display: flex; flex-direction: column; position: sticky; top: 5rem; max-height: calc(100vh - 6.5rem); }
+        .input-tavolo { width: 100%; padding: 0.6rem 0.8rem; border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 0.9rem; font-weight: 600; margin-bottom: 1rem; background: var(--input-bg); color: var(--text-main); text-align: center; }
+        .lista-comanda { list-style: none; margin-bottom: 1rem; overflow-y: auto; border-top: 1px solid var(--border); padding-top: 0.25rem; flex: 1; }
+        .comanda-vuota-stato { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-light); font-size: 0.8rem; padding: 3rem 1rem; text-align: center; gap: 0.5rem; }
+        
+        .item-comanda { display: flex; flex-direction: column; padding: 0.65rem 0; border-bottom: 1px solid var(--border); }
+        .item-riga-alta { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; }
+        .info-articolo-nome { font-weight: 500; font-size: 0.85rem; color: var(--text-main); }
+        .info-articolo-nome strong { color: var(--text-muted); font-weight: 700; margin-right: 0.25rem; }
+        
+        .input-nota-modifica { width: 100%; margin-top: 0.35rem; padding: 0.35rem 0.5rem; font-size: 0.78rem; border: 1px dashed var(--border); border-radius: var(--radius-sm); background: var(--input-bg); color: var(--text-main); }
+        .input-nota-modifica:focus { border-color: var(--primary); outline: none; border-style: solid; background: var(--surface); }
+
+        .controlli-qta { display: flex; align-items: center; gap: 0.2rem; background: var(--border); padding: 0.2rem; border-radius: var(--radius-sm); }
+        .btn-modifica { background: var(--surface); border: none; width: 24px; height: 24px; border-radius: calc(var(--radius-sm) - 2px); cursor: pointer; font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; color: var(--text-main); box-shadow: var(--shadow-sm); }
+
+        .totale-box { display: flex; flex-direction: column; padding: 0.75rem 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin-bottom: 0.75rem; }
+        .riga-totale { display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); }
+        .riga-totale.netto { font-size: 0.85rem; color: var(--text-main); }
+        .totale-prezzo { font-size: 1.4rem; color: var(--text-main); font-weight: 800; }
+        
+        .btn-azione { width: 100%; border: none; padding: 0.65rem 1rem; border-radius: var(--radius-md); font-size: 0.85rem; font-weight: 600; cursor: pointer; margin-bottom: 0.4rem; color: var(--text-main); display: flex; justify-content: center; align-items: center; gap: 0.5rem; background: var(--input-bg); border: 1px solid var(--border); }
+        .btn-stampa-completa { background: var(--primary); color: white; border: none; font-weight: 700; }
+        .blocco-pagamento { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; margin-bottom: 0.4rem; }
+        .btn-paga-contanti { background: #10b981; color: white; font-weight: 700; border: none; margin-bottom: 0; }
+        .btn-paga-pos { background: #3b82f6; color: white; font-weight: 700; border: none; margin-bottom: 0; }
+        .btn-svuota { background: transparent; color: var(--danger); border: 1px solid transparent; box-shadow: none; font-size: 0.82rem; padding: 0.25rem; }
+
+        .griglia-stampe-speciali { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; margin-bottom: 0.4rem; border-top: 1px dashed var(--border); padding-top: 0.5rem; }
+        .btn-stampa-reparto { background: var(--warning-dim); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.3); font-weight: 700; font-size: 0.78rem; }
+
+        .admin-form { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; background: var(--input-bg); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border); align-items: center; }
+        .admin-form input, .admin-form select { padding: 0.5rem 0.75rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 0.85rem; background: var(--surface); color: var(--text-main); flex: 1; min-width: 130px; }
+        .scroll-table { border: 1px solid var(--border); border-radius: var(--radius-md); overflow-x: auto; background: var(--surface); max-height: 400px; }
+        .tabella-base { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        .tabella-base th, .tabella-base td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+        .tabella-base th { background: var(--input-bg); font-weight: 600; color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; position: sticky; top: 0; z-index: 10; }
+        
+        .draggable-row { cursor: move; user-select: none; transition: background 0.15s; }
+        .draggable-row:hover { background: var(--input-bg); }
+        .draggable-row.dragging { opacity: 0.4; background: var(--border); }
+
+        .btn-mini-azione { border: 1px solid var(--border); padding: 0.3rem 0.6rem; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.78rem; font-weight: 600; background: var(--surface); color: var(--text-muted); display: inline-flex; align-items: center; gap: 0.25rem; }
+        .btn-mini-modifica { background: var(--primary); color: white; font-weight: 700; border:none; }
+        .btn-mini-elimina { background: var(--danger-dim); color: var(--danger); border-color: transparent; }
+
+        .box-riepilogo-finanziario { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem; margin-top: 1rem; }
+        .card-finanziaria { background: var(--surface); border: 1px solid var(--border); padding: 1rem; border-radius: var(--radius-md); }
+
+        #toast-container { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 8px; z-index: 9999; }
+        .toast { padding: 0.85rem 1.25rem; border-radius: var(--radius-md); font-weight: 500; font-size: 0.85rem; color: white; box-shadow: var(--shadow-lg); background: #0f172a; }
+        .toast.success { border-left: 4px solid var(--success); }
+        .toast.error { border-left: 4px solid var(--danger); }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(3px); display: none; align-items: center; justify-content: center; z-index: 1000; }
+        .modal-overlay.active { display: flex; }
+        .modal-box { background: var(--surface); padding: 1.5rem; border-radius: var(--radius-lg); width: 90%; max-width: 380px; border: 1px solid var(--border); color: var(--text-main); }
+        .modal-actions { display: flex; gap: 0.5rem; justify-content: flex-end; }
+        .btn-modal { padding: 0.6rem 1.2rem; border-radius: var(--radius-sm); font-weight: 600; font-size: 0.85rem; cursor: pointer; border: none; }
+        .btn-modal.cancel { background: var(--input-bg); color: var(--text-muted); border: 1px solid var(--border); }
+        .btn-modal.confirm { background: var(--primary); color: white; }
+
+        #blocco-stampa { display: none; }
+        
+        @media print {
+            body { background: white !important; color: black !important; font-family: 'Courier New', Courier, monospace !important; }
+            header, .window-pane, #toast-container, .modal-overlay { display: none !important; }
+            #blocco-stampa { display: block !important; padding: 0; margin: 0; }
+            
+            .print-80mm { width: 76mm; max-width: 76mm; padding: 2mm; font-size: 12px; line-height: 1.4; color: #000; }
+            .print-80mm .intestazione { text-align: center; font-weight: bold; font-size: 15px; margin-bottom: 4px; white-space: pre-line; }
+            .print-80mm .separatore { border-top: 1px dashed #000; margin: 6px 0; }
+            .print-80mm .riga-art { display: flex; justify-content: space-between; font-size: 12px; }
+            .print-80mm .riga-nota-stampa { font-size: 10px; font-style: italic; padding-left: 15px; margin-bottom: 2px; }
+            .print-80mm .totale { font-size: 16px; font-weight: bold; display: flex; justify-content: space-between; margin-top: 8px; }
+
+            .print-a4 { width: 210mm; padding: 20mm; font-size: 14px; font-family: sans-serif !important; color: #000; }
+            .print-a4 .header-a4 { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 15px; margin-bottom: 20px; }
+            .print-a4 .titolo-azienda { font-size: 26px; font-weight: 800; text-transform: uppercase; white-space: pre-line; }
+            .print-a4 .tabella-a4 { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            .print-a4 .tabella-a4 th { border-bottom: 1px solid #000; padding: 8px; text-align: left; font-weight: bold; text-transform: uppercase; font-size: 12px; }
+            .print-a4 .tabella-a4 td { padding: 10px 8px; border-bottom: 1px solid #eee; }
+            .print-a4 .testo-nota-a4 { font-size: 12px; color: #444; font-style: italic; margin-top: 2px; display: block; }
+            .print-a4 .totale-a4 { text-align: right; font-size: 22px; font-weight: bold; margin-top: 30px; border-top: 2px solid #000; padding-top: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand">
+            <h1>SmartCassa Pro</h1>
+            <span>Stampe Multi-Formato v11.5</span>
+        </div>
+        <div class="nav-buttons">
+            <button id="nav-cassa" class="btn-nav active" onclick="cambiaFinestra('CASSA')">📊 Cassa</button>
+            <button id="nav-magazzino" class="btn-nav" onclick="cambiaFinestra('MAGAZZINO')">📦 Magazzino MP</button>
+            <button id="nav-archivio" class="btn-nav" onclick="cambiaFinestra('ARCHIVIO')">⚙️ Impostazioni Menu</button>
+        </div>
+        <div class="header-tools">
+            <select id="global-formato-stampa" class="selettore-carta-global">
+                <option value="80MM">🖨️ Formato Carta: 80mm</option>
+                <option value="A4">📄 Formato Carta: A4</option>
+            </select>
+            <button id="theme-toggle" class="theme-toggle" onclick="toggleTheme()">🌙</button>
+            <div id="data-ora">--:--:--</div>
+        </div>
+    </header>
+
+    <div id="pane-cassa" class="window-pane active">
+        <div class="menu-container">
+            <div class="sezione-blocco" style="padding: 1rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+                <input type="text" id="ricerca-banco" class="input-tavolo" placeholder="🔍 Cerca prodotto..." style="margin-bottom: 0; max-width: 300px; text-align: left;" oninput="impostaFiltroRicerca(this.value)">
+                <div class="barra-filtri-banco" id="contenitore-tabs-banco"></div>
+            </div>
+            <div id="contenitore-banco-categorie" style="display: flex; flex-direction: column; gap: 1.25rem;"></div>
+        </div>
+
+        <aside class="comanda-container">
+            <input type="text" id="num-tavolo" class="input-tavolo" placeholder="Tavolo / Nome Cliente">
+            <ul class="lista-comanda" id="corpo-comanda"></ul>
+            
+            <div class="totale-box">
+                <div class="riga-totale netto">
+                    <span>TOTALE DA PAGARE</span>
+                    <span id="totale-comanda" class="totale-prezzo">0,00 €</span>
+                </div>
+            </div>
+
+            <button id="btn-stampa-principale" class="btn-azione btn-stampa-completa" onclick="eseguiProcessoStampaDinamico('CLIENTE')" disabled>🖨️ Stampa Documento Totale</button>
+            
+            <div class="griglia-stampe-speciali">
+                <button id="btn-stampa-cucina" class="btn-azione btn-stampa-reparto" onclick="eseguiProcessoStampaDinamico('CUCINA')" disabled>🍳 Comanda Cucina</button>
+                <button id="btn-stampa-bar" class="btn-azione btn-stampa-reparto" style="background:var(--info-dim); color:var(--info); border-color:rgba(59,130,246,0.3);" onclick="eseguiProcessoStampaDinamico('BAR')" disabled>☕ Comanda Bar</button>
+            </div>
+
+            <div class="blocco-pagamento">
+                <button id="btn-azione-contanti" class="btn-azione btn-paga-contanti" onclick="apriModalResto()" disabled>💶 Contanti</button>
+                <button id="btn-azione-pos" class="btn-azione btn-paga-pos" onclick="chiudiEArchiviaOrdine('POS')" disabled>💳 POS</button>
+            </div>
+            <button id="btn-azione-svuota" class="btn-azione btn-svuota" onclick="svuotaComanda()" disabled>Annulla operazione</button>
+        </aside>
+    </div>
+
+    <div id="pane-magazzino" class="window-pane">
+        <div style="width: 100%; display: flex; flex-direction: column; gap: 1.5rem;">
+            <div class="sezione-blocco">
+                <h2 class="titolo-sezione" id="titolo-modulo-mp">Crea / Modifica Ingrediente o Materia Prima</h2>
+                <div class="admin-form">
+                    <input type="text" id="mp-nome" placeholder="Es. Piadine, Cotolette...">
+                    <input type="text" id="mp-keyword" placeholder="Parola Chiave (es. piadina)">
+                    <input type="number" id="mp-scorte" placeholder="Scorte Iniziali" min="0" value="50">
+                    <button class="btn-mini-azione btn-mini-modifica" onclick="salvaMateriaPrima()" style="padding:0.6rem 1.5rem;">Salva</button>
+                    <button class="btn-mini-azione" id="btn-annulla-mp" onclick="resetFormMP()" style="display:none;">Annulla</button>
+                </div>
+            </div>
+
+            <div class="sezione-blocco">
+                <h2 class="titolo-sezione">Giacenze Correnti</h2>
+                <div class="scroll-table">
+                    <table class="tabella-base">
+                        <thead>
+                            <tr>
+                                <th>Elemento Magazzino</th>
+                                <th>Parola Chiave Collegata</th>
+                                <th style="text-align: center; width: 180px;">Scorte Residue</th>
+                                <th>Stato Alert</th>
+                                <th>Azioni</th>
+                            </tr>
+                        </thead>
+                        <tbody id="corpo-tabella-magazzino-mp"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="pane-archivio" class="window-pane">
+        <div style="width: 100%; display: flex; flex-direction: column; gap: 1.5rem;">
+
+            <div class="sezione-blocco">
+                <h2 class="titolo-sezione">📝 Configurazione Intestazione Scontrino / Fattura</h2>
+                <div style="display:flex; flex-direction:column; align-items:stretch;">
+                    <textarea id="config-intestazione" rows="3" style="width:100%; padding:0.75rem; border:1px solid var(--border); border-radius:var(--radius-sm); font-family:monospace; margin-bottom:0.75rem; background:var(--input-bg); color:var(--text-main); outline:none;" placeholder="Es:&#10;SMARTCASSA PRO S.R.L.&#10;Via Roma 1&#10;P.IVA 0000000"></textarea>
+                    <div style="display:flex; justify-content:flex-end;">
+                        <button class="btn-mini-azione btn-mini-modifica" onclick="salvaIntestazioneRicevuta()" style="padding: 0.5rem 1.5rem;">💾 Salva Intestazione</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sezione-blocco" style="display: flex; gap: 1rem; align-items: center; justify-content: space-between; flex-wrap: wrap; background: var(--input-bg);">
+                <div>
+                    <h3 style="font-size:0.9rem; font-weight:700;">💾 Salvataggio e Backup Sistema</h3>
+                </div>
+                <div style="display:flex; gap:0.5rem;">
+                    <button class="btn-mini-azione btn-mini-modifica" onclick="esportaBackupIntero()" style="border:none;">⬇️ Scarica Backup</button>
+                    <button class="btn-mini-azione" onclick="document.getElementById('input-file-backup').click()">⬆️ Ripristina</button>
+                    <input type="file" id="input-file-backup" style="display:none;" accept=".json" onchange="importaBackupIntero(this)">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                <div class="sezione-blocco">
+                    <div class="titolo-sezione">
+                        <span>Report Vendite Giornaliero</span>
+                        <button class="btn-mini-azione" onclick="esportaInExcelCSV()" style="font-size:0.7rem; color:var(--success);">📊 Esporta Excel (.csv)</button>
+                    </div>
+                    <div class="scroll-table" style="max-height: 200px;">
+                        <table class="tabella-base">
+                            <thead><tr><th>Articolo</th><th>Q.tà</th><th>Incasso</th></tr></thead>
+                            <tbody id="corpo-report-vendites"></tbody>
+                        </table>
+                    </div>
+                    <div class="box-riepilogo-finanziario">
+                        <div class="card-finanziaria"><div>Contanti</div><div id="fin-contanti" style="font-weight:700;">0,00 €</div></div>
+                        <div class="card-finanziaria"><div>POS</div><div id="fin-pos" style="font-weight:700;">0,00 €</div></div>
+                        <div class="card-finanziaria"><div>Totale</div><div id="fin-totale-generale" style="font-weight:800; color:var(--success);">0,00 €</div></div>
+                    </div>
+                    <button class="btn-azione" onclick="confermaAzzeraTutto()" style="margin-top:1rem; background:var(--danger-dim); color:var(--danger);">⚠️ Chiusura Giornaliera Z</button>
+                </div>
+
+                <div class="sezione-blocco">
+                    <h2 class="titolo-sezione">Gestione Categorie (Trascina ☰ per riordinare)</h2>
+                    <div class="admin-form">
+                        <input type="text" id="nuova-cat-nome" placeholder="Nuova Categoria">
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
+                            <label style="font-size: 0.65rem; font-weight: 700; color: var(--text-muted)">BORDO</label>
+                            <input type="color" id="nuova-cat-colore" value="#e2e8f0" style="width:50px; height:32px; padding:0; cursor:pointer; min-width:unset;">
+                        </div>
+                        <button class="btn-mini-azione btn-mini-modifica" id="btn-salva-cat" onclick="creaNuovaCategoria()">Aggiungi</button>
+                        <button class="btn-mini-azione" id="btn-annulla-cat" onclick="annullaModificaCategoria()" style="display:none;">Annulla</button>
+                    </div>
+                    <div class="scroll-table" style="max-height: 180px;">
+                        <table class="tabella-base">
+                            <thead><tr><th style="width:40px;">Order</th><th>Nome Categoria</th><th>Colore Bordo</th><th>Azioni</th></tr></thead>
+                            <tbody id="corpo-tabella-categorie"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sezione-blocco">
+                <h2 class="titolo-sezione">Inserisci Nuovo Prodotto a Listino (Trascina ☰ per riordinare nel banco)</h2>
+                <div class="admin-form">
+                    <input type="text" id="nuovo-nome" placeholder="Nome Articolo">
+                    <input type="number" id="nuovo-prezzo" placeholder="Prezzo (€)" step="0.01">
+                    <select id="nuova-categoria"></select>
+                    <button class="btn-mini-azione btn-mini-modifica" id="btn-salva-prod" onclick="aggiungiOModificaProdotto()">Salva</button>
+                    <button class="btn-mini-azione" id="btn-annulla-prod" onclick="annullaModificaProdotto()" style="display:none;">Annulla</button>
+                </div>
+                <div class="scroll-table" style="max-height: 250px;">
+                    <table class="tabella-base">
+                        <thead><tr><th style="width:40px;">Order</th><th>Nome</th><th>Prezzo</th><th>Categoria</th><th>Azioni</th></tr></thead>
+                        <tbody id="corpo-tabella-listino"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="blocco-stampa"></div>
+    <div id="toast-container"></div>
+
+    <div class="modal-overlay" id="modal-resto">
+        <div class="modal-box">
+            <h3>Pagamento Contanti</h3>
+            <p>Totale: <strong id="netto-modal-resto">0,00 €</strong></p>
+            <input type="number" id="input-contante" placeholder="Cifra ricevuta..." step="0.01" oninput="calcolaRestoIstantaneo(this.value)">
+            <div style="background: var(--input-bg); padding: 0.75rem; text-align: center; margin-bottom: 1rem;">
+                <span style="font-size: 0.7rem; font-weight:700;">RESTO</span>
+                <div id="resto-calcolato" style="font-size: 1.4rem; font-weight:800;">0,00 €</div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-modal cancel" onclick="chiudiModalResto()">Annulla</button>
+                <button class="btn-modal confirm" onclick="confermaPagamentoContanti()">Conferma</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let testoIntestazionePredefinito = "SMARTCASSA PRO\nVia del Progresso, 42 - Italia\nP.IVA 00000000000";
+
+        let elencoCategorie = [
+            { nome: "piadine", colore: "#0f172a" },
+            { nome: "panini", colore: "#3b82f6" },
+            { nome: "piatti", colore: "#10b981" },
+            { nome: "bevande", colore: "#f59e0b" },
+            { nome: "caffetteria", colore: "#ef4444" }
+        ];
+        
+        let magazzinoMateriePrime = [
+            { id: 1, nome: "Piadine", keyword: "piadina", scorte: 40 },
+            { id: 2, nome: "Cotolette", keyword: "cotoletta", scorte: 20 },
+            { id: 3, nome: "Hamburger", keyword: "hamburger", scorte: 25 },
+            { id: 4, nome: "Acqua Naturale", keyword: "acqua", scorte: 50 }
+        ];
+
+        let databaseMenu = [
+            { id: 1, categoria: "piadine", nome: "Piadina Crudo Squacquerone", prezzo: 6.50, attivo: true },
+            { id: 2, categoria: "piadine", nome: "Piadina Cotto e Mozzarella", prezzo: 5.50, attivo: true },
+            { id: 11, categoria: "panini", nome: "Panino Hamburger e Cheddar", prezzo: 8.00, attivo: true },
+            { id: 12, categoria: "panini", nome: "Panino Cotoletta", prezzo: 7.00, attivo: true },
+            { id: 13, categoria: "piatti", nome: "Piatto Cotoletta e Patate", prezzo: 12.00, attivo: true },
+            { id: 15, categoria: "bevande", nome: "Acqua Naturale 0.5L", prezzo: 1.50, attivo: true },
+            { id: 17, categoria: "bevande", nome: "Birra in Lattina", prezzo: 3.00, attivo: true }
+        ];
+
+        let comandaAttuale = [];
+        let storicovendites = {};
+        let archivioRicevute = [];
+        let contatoreRicevute = 1;
+
+        let idMPInModifica = null;
+        let idProdottoInModifica = null;
+        let indexCategoriaInModifica = null;
+
+        let categoriaSelezionataBanco = "TUTTE";
+        let termineRicercaBanco = "";
+        let indexSorgenteTrascina = null;
+
+        const formattaEuro = (val) => new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(val);
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerText = message;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 2000);
+        }
+
+        function cambiaFinestra(nomeFinestra) {
+            document.querySelectorAll('.window-pane').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.btn-nav').forEach(b => b.classList.remove('active'));
+            
+            if (nomeFinestra === 'CASSA') {
+                document.getElementById('pane-cassa').classList.add('active');
+                document.getElementById('nav-cassa').classList.add('active');
+                disegnaTabsCategoriaBanco();
+                inizializzaBancoVendita();
+            } else if (nomeFinestra === 'MAGAZZINO') {
+                document.getElementById('pane-magazzino').classList.add('active');
+                document.getElementById('nav-magazzino').classList.add('active');
+                mostraTabellaMagazzinoMP();
+            } else if (nomeFinestra === 'ARCHIVIO') {
+                document.getElementById('pane-archivio').classList.add('active');
+                document.getElementById('nav-archivio').classList.add('active');
+                document.getElementById('config-intestazione').value = testoIntestazionePredefinito;
+                aggiornaSelettoreFiltroAdmin();
+                mostraTabellaCategorieEditabili();
+                aggiornaTabellaReportEListino();
+            }
+        }
+
+        function toggleTheme() { document.body.classList.toggle('dark-mode'); }
+        setInterval(() => { document.getElementById('data-ora').innerText = new Date().toLocaleTimeString('it-IT'); }, 1000);
+
+        function salvaIntestazioneRicevuta() {
+            testoIntestazionePredefinito = document.getElementById('config-intestazione').value;
+            salvaDatiLocali();
+            showToast("Intestazione salvata con successo!");
+        }
+
+        function ottieniMPPerProdotto(nomeProdotto) {
+            return magazzinoMateriePrime.find(mp => nomeProdotto.toLowerCase().includes(mp.keyword.toLowerCase().trim()));
+        }
+
+        function disegnaTabsCategoriaBanco() {
+            const container = document.getElementById('contenitore-tabs-banco');
+            container.innerHTML = "";
+            const tTutte = document.createElement('button');
+            tTutte.className = `tab-filtro ${categoriaSelezionataBanco === 'TUTTE' ? 'active' : ''}`;
+            tTutte.innerText = "✨ TUTTE";
+            tTutte.onclick = () => { categoriaSelezionataBanco = "TUTTE"; disegnaTabsCategoriaBanco(); inizializzaBancoVendita(); };
+            container.appendChild(tTutte);
+
+            elencoCategorie.forEach(cat => {
+                const tab = document.createElement('button');
+                tab.className = `tab-filtro ${categoriaSelezionataBanco === cat.nome ? 'active' : ''}`;
+                tab.innerText = cat.nome.toUpperCase();
+                tab.style.borderBottom = `3px solid ${cat.colore || 'var(--border)'}`;
+                tab.onclick = () => { categoriaSelezionataBanco = cat.nome; disegnaTabsCategoriaBanco(); inizializzaBancoVendita(); };
+                container.appendChild(tab);
+            });
+        }
+
+        function impostaFiltroRicerca(val) {
+            termineRicercaBanco = val.toLowerCase().trim();
+            inizializzaBancoVendita();
+        }
+
+        function inizializzaBancoVendita() {
+            const container = document.getElementById('contenitore-banco-categorie');
+            container.innerHTML = "";
+            let categories = categoriaSelezionataBanco === "TUTTE" ? elencoCategorie : elencoCategorie.filter(c => c.nome === categoriaSelezionataBanco);
+
+            categories.forEach(cat => {
+                let lista = databaseMenu.filter(p => p.categoria === cat.nome && p.attivo);
+                if (termineRicercaBanco) lista = lista.filter(p => p.nome.toLowerCase().includes(termineRicercaBanco));
+                if (lista.length === 0) return;
+
+                const sez = document.createElement('section');
+                sez.className = 'sezione-blocco';
+                sez.style.border = `2px solid ${cat.colore || 'var(--border)'}`;
+                
+                sez.innerHTML = `<h2 class="titolo-sezione" style="color: ${cat.colore || 'var(--text-muted)'}">${cat.nome.toUpperCase()}</h2>`;
+                const grid = document.createElement('div');
+                grid.className = 'grid-prodotti';
+
+                lista.forEach(p => {
+                    const card = document.createElement('div');
+                    const mpCollegata = ottieniMPPerProdotto(p.nome);
+                    
+                    let scorteDisponibili = mpCollegata ? mpCollegata.scorte : 999;
+                    const giaInCarrello = comandaAttuale.filter(item => ottieniMPPerProdotto(item.nome)?.id === mpCollegata?.id);
+                    const qtaImpegnata = giaInCarrello.reduce((sum, item) => sum + item.quantita, 0);
+                    scorteDisponibili -= qtaImpegnata;
+
+                    const isEsaurito = mpCollegata && scorteDisponibili <= 0;
+                    card.className = `card-prodotto ${isEsaurito ? 'esaurito' : ''}`;
+                    if (!isEsaurito) card.onclick = () => aggiungiInComanda(p.id);
+
+                    let stringaStock = mpCollegata 
+                        ? `<span class="scorta-prodotto ${scorteDisponibili <= 3 ? 'low' : ''}">Scorta: ${scorteDisponibili} pz</span>` 
+                        : `<span class="scorta-prodotto">Sempre disp.</span>`;
+
+                    card.innerHTML = `<div class="nome-prodotto">${p.nome}</div>${stringaStock}<div class="prezzo-prodotto">${formattaEuro(p.prezzo)}</div>`;
+                    grid.appendChild(card);
+                });
+                sez.appendChild(grid);
+                container.appendChild(sez);
+            });
+            aggiornaInterfacciaComanda();
+        }
+
+        function aggiungiInComanda(id) {
+            const prod = databaseMenu.find(p => p.id === id);
+            if (!prod) return;
+
+            const mpCollegata = ottieniMPPerProdotto(prod.nome);
+            if (mpCollegata) {
+                const giaInCarrello = comandaAttuale.filter(item => ottieniMPPerProdotto(item.nome)?.id === mpCollegata.id);
+                const qtaImpegnata = giaInCarrello.reduce((sum, item) => sum + item.quantita, 0);
+                if (qtaImpegnata >= mpCollegata.scorte) {
+                    showToast(`Ingrediente Esaurito!`, "error");
+                    return;
+                }
+            }
+
+            const existing = comandaAttuale.find(i => i.id === id);
+            if (existing) existing.quantita++;
+            else comandaAttuale.push({ id: prod.id, nome: prod.nome, prezzo: prod.prezzo, categoria: prod.categoria, quantita: 1, note: "" });
+            inizializzaBancoVendita();
+        }
+
+        function cambiaQuantitaItem(idx, variaz) {
+            const item = comandaAttuale[idx];
+            const mpCollegata = ottieniMPPerProdotto(item.nome);
+            if (variaz > 0 && mpCollegata) {
+                const giaInCarrello = comandaAttuale.filter(i => ottieniMPPerProdotto(i.nome)?.id === mpCollegata.id);
+                const qtaImpegnata = giaInCarrello.reduce((sum, i) => sum + i.quantita, 0);
+                if (qtaImpegnata >= mpCollegata.scorte) return;
+            }
+            item.quantita += variaz;
+            if (item.quantita <= 0) comandaAttuale.splice(idx, 1);
+            inizializzaBancoVendita();
+        }
+
+        function aggiornaNotaItem(idx, testoNota) {
+            if(comandaAttuale[idx]) comandaAttuale[idx].note = testoNota;
+        }
+
+        function aggiornaInterfacciaComanda() {
+            const corpo = document.getElementById('corpo-comanda');
+            corpo.innerHTML = "";
+            if (comandaAttuale.length === 0) {
+                corpo.innerHTML = `<div class="comanda-vuota-stato">Nessun elemento selezionato.</div>`;
+                document.getElementById('totale-comanda').innerText = formattaEuro(0);
+                document.querySelectorAll('.comanda-container button').forEach(b => b.disabled = true);
+                return;
+            }
+            let totale = 0;
+            comandaAttuale.forEach((item, idx) => {
+                totale += item.prezzo * item.quantita;
+                const li = document.createElement('li');
+                li.className = 'item-comanda';
+                li.innerHTML = `
+                    <div class="item-riga-alta">
+                        <div class="info-articolo-nome"><strong>${item.quantita}x</strong> ${item.nome}</div>
+                        <div style="display:flex; align-items:center; gap:0.5rem;">
+                            <span style="font-weight:700;">${formattaEuro(item.prezzo * item.quantita)}</span>
+                            <div class="controlli-qta">
+                                <button class="btn-modifica" onclick="cambiaQuantitaItem(${idx}, -1)">-</button>
+                                <button class="btn-modifica" onclick="cambiaQuantitaItem(${idx}, 1)">+</button>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="text" class="input-nota-modifica" placeholder="Note (es. senza cipolla)..." value="${item.note || ''}" oninput="aggiornaNotaItem(${idx}, this.value)">
+                `;
+                corpo.appendChild(li);
+            });
+            document.getElementById('totale-comanda').innerText = formattaEuro(totale);
+            document.querySelectorAll('.comanda-container button').forEach(b => b.disabled = false);
+        }
+
+        function svuotaComanda() { comandaAttuale = []; document.getElementById('num-tavolo').value = ""; inizializzaBancoVendita(); }
+
+        function chiudiEArchiviaOrdine(metodo) {
+            let subtotOrdine = comandaAttuale.reduce((t, i) => t + (i.prezzo * i.quantita), 0);
+            
+            comandaAttuale.forEach(item => {
+                const mpCollegata = ottieniMPPerProdotto(item.nome);
+                if (mpCollegata) {
+                    mpCollegata.scorte = Math.max(0, mpCollegata.scorte - item.quantita);
+                }
+                if (!storicovendites[item.nome]) storicovendites[item.nome] = { qta: 0, incasso: 0 };
+                storicovendites[item.nome].qta += item.quantita;
+                storicovendites[item.nome].incasso += (item.prezzo * item.quantita);
+            });
+
+            archivioRicevute.unshift({
+                id: contatoreRicevute++, 
+                data: new Date().toLocaleString('it-IT'),
+                tavolo: document.getElementById('num-tavolo').value.trim() || "Banco",
+                totale: subtotOrdine,
+                metodo: metodo, 
+                articoli: comandaAttuale.map(i => {
+                    let text = `${i.quantita}x ${i.nome}`;
+                    if(i.note) text += ` [Note: ${i.note}]`;
+                    return text;
+                }).join(" | ")
+            });
+
+            svuotaComanda();
+            salvaDatiLocali();
+            showToast("Vendita registrata!");
+        }
+
+        function apriModalResto() {
+            const netto = comandaAttuale.reduce((tot, i) => tot + (i.prezzo * i.quantita), 0);
+            document.getElementById('netto-modal-resto').innerText = formattaEuro(netto);
+            document.getElementById('input-contante').value = "";
+            document.getElementById('resto-calcolato').innerText = formattaEuro(0);
+            document.getElementById('modal-resto').classList.add('active');
+        }
+        function chiudiModalResto() { document.getElementById('modal-resto').classList.remove('active'); }
+        function calcolaRestoIstantaneo(val) {
+            const netto = comandaAttuale.reduce((tot, i) => tot + (i.prezzo * i.quantita), 0);
+            const ricevuto = parseFloat(val) || 0;
+            document.getElementById('resto-calcolato').innerText = formattaEuro(ricevuto >= netto ? ricevuto - netto : 0);
+        }
+        function confermaPagamentoContanti() { chiudiModalResto(); chiudiEArchiviaOrdine('CONTANTI'); }
+
+        function eseguiProcessoStampaDinamico(tipoReparto) {
+            const formatoLayout = document.getElementById('global-formato-stampa').value;
+            const contenitoreMuro = document.getElementById('blocco-stampa');
+            contenitoreMuro.innerHTML = ""; 
+
+            let tavoloLetto = document.getElementById('num-tavolo').value.trim() || "Banco";
+            let dataCorrenteStr = new Date().toLocaleString('it-IT');
+            let listaArticoliFiltrati = [];
+
+            if (tipoReparto === 'CLIENTE') {
+                listaArticoliFiltrati = [...comandaAttuale];
+            } else if (tipoReparto === 'CUCINA') {
+                listaArticoliFiltrati = comandaAttuale.filter(i => ["piadine", "panini", "piatti"].includes(i.categoria.toLowerCase()));
+            } else if (tipoReparto === 'BAR') {
+                listaArticoliFiltrati = comandaAttuale.filter(i => ["bevande", "caffetteria"].includes(i.categoria.toLowerCase()));
+            }
+
+            if (listaArticoliFiltrati.length === 0) {
+                showToast(`Nessun articolo per ${tipoReparto}`, "error");
+                return;
+            }
+
+            let intestazioneHtmlFormattata = testoIntestazionePredefinito.replace(/\n/g, "<br>");
+
+            if (formatoLayout === '80MM') {
+                let layout = document.createElement('div');
+                layout.className = 'print-80mm';
+                let titoloLabel = tipoReparto === 'CLIENTE' ? '*** DOCUMENTO COMMERCIALE ***' : `COMANDA: ${tipoReparto}`;
+                
+                let corpoIn = `
+                    <div class="intestazione">${tipoReparto === 'CLIENTE' ? intestazioneHtmlFormattata : 'SMARTCASSA PRO'}</div>
+                    <div style="text-align:center; font-size:10px; font-weight:bold; margin-top:5px;">${titoloLabel}</div>
+                    <div class="separatore"></div>
+                    <div style="font-size:11px;">
+                        <div><b>Rif:</b> ${tavoloLetto}</div>
+                        <div><b>Data:</b> ${dataCorrenteStr}</div>
+                    </div>
+                    <div class="separatore"></div>
+                `;
+
+                let sommaTotaleMuro = 0;
+                listaArticoliFiltrati.forEach(i => {
+                    let subtot = i.prezzo * i.quantita;
+                    sommaTotaleMuro += subtot;
+                    corpoIn += `
+                        <div class="riga-art">
+                            <span>${i.quantita}x ${i.nome}</span>
+                            <span>${tipoReparto === 'CLIENTE' ? formattaEuro(subtot) : ''}</span>
+                        </div>
+                    `;
+                    if (i.note && i.note.trim() !== "") {
+                        corpoIn += `<div class="riga-nota-stampa">* Nota: ${i.note.trim()}</div>`;
+                    }
+                });
+
+                if (tipoReparto === 'CLIENTE') {
+                    corpoIn += `
+                        <div class="separatore"></div>
+                        <div class="totale">
+                            <span>TOTALE:</span>
+                            <span>${formattaEuro(sommaTotaleMuro)}</span>
+                        </div>
+                    `;
+                }
+
+                corpoIn += `<div class="separatore"></div>`;
+                layout.innerHTML = corpoIn;
+                contenitoreMuro.appendChild(layout);
+            } 
+            else if (formatoLayout === 'A4') {
+                let layout = document.createElement('div');
+                layout.className = 'print-a4';
+                let calcoloTotaleA4 = listaArticoliFiltrati.reduce((acc, x) => acc + (x.prezzo * x.quantita), 0);
+                let titoloDocumentoA4 = tipoReparto === 'CLIENTE' ? 'DOCUMENTO COMMERCIALE DI VENDITA' : `ORDINE DI PRODUZIONE - REPARTO ${tipoReparto}`;
+
+                let corpoIn = `
+                    <div class="header-a4">
+                        <div>
+                            <div class="titolo-azienda">${tipoReparto === 'CLIENTE' ? intestazioneHtmlFormattata : 'SmartCassa Pro'}</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <h2 style="font-size:18px;">${titoloDocumentoA4}</h2>
+                            <div style="margin-top:5px;"><b>Data:</b> ${dataCorrenteStr}</div>
+                        </div>
+                    </div>
+                    <div style="margin-bottom:20px; background:#f8fafc; padding:12px; border:1px solid #e2e8f0;">
+                        Riferimento Comanda / Tavolo: <strong>${tavoloLetto}</strong>
+                    </div>
+                    <table class="tabella-a4">
+                        <thead>
+                            <tr>
+                                <th>Articolo</th>
+                                <th style="text-align:center; width:80px;">Q.tà</th>
+                                ${tipoReparto === 'CLIENTE' ? '<th style="text-align:right; width:120px;">Prezzo Un.</th><th style="text-align:right; width:140px;">Totale</th>' : ''}
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                listaArticoliFiltrati.forEach(i => {
+                    let rigaNota = (i.note && i.note.trim() !== "") ? `<span class="testo-nota-a4">Nota: ${i.note.trim()}</span>` : '';
+                    corpoIn += `
+                        <tr>
+                            <td>
+                                <strong>${i.nome}</strong>
+                                ${rigaNota}
+                            </td>
+                            <td style="text-align:center; font-weight:bold;">${i.quantita}</td>
+                            ${tipoReparto === 'CLIENTE' ? `
+                            <td style="text-align:right;">${formattaEuro(i.prezzo)}</td>
+                            <td style="text-align:right;">${formattaEuro(i.prezzo * i.quantita)}</td>` : ''}
+                        </tr>
+                    `;
+                });
+
+                corpoIn += `</tbody></table>`;
+
+                if (tipoReparto === 'CLIENTE') {
+                    corpoIn += `
+                        <div class="totale-a4">
+                            <span style="font-size:14px; font-weight:normal; margin-right:15px;">TOTALE COMPLESSIVO:</span>
+                            ${formattaEuro(calcoloTotaleA4)}
+                        </div>
+                    `;
+                }
+
+                layout.innerHTML = corpoIn;
+                contenitoreMuro.appendChild(layout);
+            }
+
+            window.print();
+        }
+
+        // --- GESTIONE CATEGORIE --- //
+
+        function mostraTabellaCategorieEditabili() {
+            const corpo = document.getElementById('corpo-tabella-categorie');
+            corpo.innerHTML = "";
+            elencoCategorie.forEach((cat, idx) => {
+                const tr = document.createElement('tr');
+                tr.className = "draggable-row";
+                tr.draggable = true;
+                
+                tr.ondragstart = (e) => gestisciDragStart(idx);
+                tr.ondragover = (e) => e.preventDefault();
+                tr.ondrop = (e) => gestisciDropCategorie(idx);
+
+                tr.innerHTML = `
+                    <td style="text-align:center; font-size:1.1rem; color:var(--text-light)">☰</td>
+                    <td><strong>${cat.nome.toUpperCase()}</strong></td>
+                    <td>
+                        <input type="color" value="${cat.colore || '#e2e8f0'}" onchange="cambiaColoreCategoria(${idx}, this.value)" style="width:45px; height:26px; border:none; cursor:pointer; background:transparent;">
+                    </td>
+                    <td>
+                        <button class="btn-mini-azione" onclick="caricaModificaCategoria(${idx})">✏️ Modifica</button>
+                        <button class="btn-mini-azione btn-mini-elimina" onclick="rimuoviCategoria('${cat.nome}')">🗑️ Rimuovi</button>
+                    </td>
+                `;
+                corpo.appendChild(tr);
+            });
+        }
+
+        function cambiaColoreCategoria(idx, nuovoColore) {
+            elencoCategorie[idx].colore = nuovoColore;
+            salvaDatiLocali();
+            showToast("Colore bordo salvato!");
+        }
+
+        function caricaModificaCategoria(idx) {
+            indexCategoriaInModifica = idx;
+            document.getElementById('nuova-cat-nome').value = elencoCategorie[idx].nome;
+            document.getElementById('nuova-cat-colore').value = elencoCategorie[idx].colore || '#e2e8f0';
+            document.getElementById('btn-salva-cat').innerText = "Aggiorna";
+            document.getElementById('btn-annulla-cat').style.display = "inline-block";
+        }
+
+        function annullaModificaCategoria() {
+            indexCategoriaInModifica = null;
+            document.getElementById('nuova-cat-nome').value = "";
+            document.getElementById('nuova-cat-colore').value = "#e2e8f0";
+            document.getElementById('btn-salva-cat').innerText = "Aggiungi";
+            document.getElementById('btn-annulla-cat').style.display = "none";
+        }
+
+        function creaNuovaCategoria() {
+            const input = document.getElementById('nuova-cat-nome');
+            const colorInput = document.getElementById('nuova-cat-colore');
+            const nome = input.value.trim().toLowerCase();
+            if(!nome) return;
+
+            if (indexCategoriaInModifica !== null) {
+                // Modalità Aggiornamento
+                const vecchioNome = elencoCategorie[indexCategoriaInModifica].nome;
+                if (vecchioNome !== nome && elencoCategorie.some((c, i) => i !== indexCategoriaInModifica && c.nome === nome)) { 
+                    showToast("Nome categoria già in uso", "error"); 
+                    return; 
+                }
+                elencoCategorie[indexCategoriaInModifica].nome = nome;
+                elencoCategorie[indexCategoriaInModifica].colore = colorInput.value;
+                
+                // Aggiorna anche tutti i prodotti a listino collegati a questa vecchia categoria
+                databaseMenu.forEach(prod => {
+                    if (prod.categoria === vecchioNome) prod.categoria = nome;
+                });
+                showToast("Categoria aggiornata!");
+            } else {
+                // Nuova Categoria
+                if(elencoCategorie.some(c => c.nome === nome)) { showToast("Categoria già esistente", "error"); return; }
+                elencoCategorie.push({ nome: nome, colore: colorInput.value });
+                showToast("Categoria creata!");
+            }
+            
+            annullaModificaCategoria();
+            salvaDatiLocali(); 
+            mostraTabellaCategorieEditabili(); 
+            aggiornaSelettoreFiltroAdmin();
+            aggiornaTabellaReportEListino();
+        }
+
+        function rimuoviCategoria(catNome) {
+            if(databaseMenu.some(p => p.categoria === catNome)) { showToast("Categoria in uso nei prodotti!", "error"); return; }
+            elencoCategorie = elencoCategorie.filter(c => c.nome !== catNome);
+            salvaDatiLocali(); 
+            mostraTabellaCategorieEditabili(); 
+            aggiornaSelettoreFiltroAdmin();
+        }
+
+        function gestisciDragStart(index) { indexSorgenteTrascina = index; }
+
+        function gestisciDropCategorie(indexDestinazione) {
+            if (indexSorgenteTrascina === null || indexSorgenteTrascina === indexDestinazione) return;
+            const elementoEstratto = elencoCategorie.splice(indexSorgenteTrascina, 1)[0];
+            elencoCategorie.splice(indexDestinazione, 0, elementoEstratto);
+            indexSorgenteTrascina = null;
+            salvaDatiLocali();
+            mostraTabellaCategorieEditabili();
+            showToast("Ordinamento categorie aggiornato!");
+        }
+
+        // --- GESTIONE PRODOTTI --- //
+
+        function gestisciDropProdotti(indexDestinazione) {
+            if (indexSorgenteTrascina === null || indexSorgenteTrascina === indexDestinazione) return;
+            const elementoEstratto = databaseMenu.splice(indexSorgenteTrascina, 1)[0];
+            databaseMenu.splice(indexDestinazione, 0, elementoEstratto);
+            indexSorgenteTrascina = null;
+            salvaDatiLocali();
+            aggiornaTabellaReportEListino();
+            showToast("Ordinamento prodotti listino aggiornato!");
+        }
+
+        function mostraTabellaMagazzinoMP() {
+            const corpo = document.getElementById('corpo-tabella-magazzino-mp'); corpo.innerHTML = "";
+            magazzinoMateriePrime.forEach(mp => {
+                let alertStato = mp.scorte <= 5 ? `<span style="color:var(--danger); font-weight:700;">🚨 BASSO</span>` : `🟢 OK`;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${mp.nome}</strong></td><td><code>${mp.keyword}</code></td>
+                    <td style="text-align: center;">
+                        <div style="display:flex; align-items:center; justify-content:center; gap:0.3rem;">
+                            <button class="btn-mini-azione" onclick="modificaGiacenzaDiretta(${mp.id}, -1)">-</button>
+                            <input type="number" value="${mp.scorte}" style="width:55px; text-align:center;" onchange="impostaGiacenzaManuale(${mp.id}, this.value)">
+                            <button class="btn-mini-azione" onclick="modificaGiacenzaDiretta(${mp.id}, 1)">+</button>
+                        </div>
+                    </td><td>${alertStato}</td>
+                    <td><button class="btn-mini-azione btn-mini-modifica" onclick="caricaModificaMP(${mp.id})">Modifica</button>
+                    <button class="btn-mini-azione btn-mini-elimina" onclick="eliminaMateriaPrima(${mp.id})">Rimuovi</button></td>
+                `;
+                corpo.appendChild(tr);
+            });
+        }
+
+        function modificaGiacenzaDiretta(id, q) { const mp = magazzinoMateriePrime.find(x => x.id === id); if(mp) { mp.scorte = Math.max(0, mp.scorte + q); salvaDatiLocali(); mostraTabellaMagazzinoMP(); } }
+        function impostaGiacenzaManuale(id, val) { const mp = magazzinoMateriePrime.find(x => x.id === id); if(mp) { let n = parseInt(val); mp.scorte = isNaN(n) || n < 0 ? 0 : n; salvaDatiLocali(); mostraTabellaMagazzinoMP(); } }
+
+        function salvaMateriaPrima() {
+            const nome = document.getElementById('mp-nome').value.trim();
+            const keyword = document.getElementById('mp-keyword').value.trim().toLowerCase();
+            const scorte = parseInt(document.getElementById('mp-scorte').value) || 0;
+            if(!nome || !keyword) return;
+
+            if (idMPInModifica !== null) {
+                const mp = magazzinoMateriePrime.find(x => x.id === idMPInModifica);
+                if (mp) { mp.nome = nome; mp.keyword = keyword; mp.scorte = scorte; }
+            } else {
+                const maxId = magazzinoMateriePrime.reduce((max, x) => x.id > max ? x.id : max, 0);
+                magazzinoMateriePrime.push({ id: maxId + 1, nome: nome, keyword: keyword, scorte: scorte });
+            }
+            resetFormMP(); salvaDatiLocali(); mostraTabellaMagazzinoMP();
+        }
+
+        function caricaModificaMP(id) {
+            const mp = magazzinoMateriePrime.find(x => x.id === id); if (!mp) return;
+            document.getElementById('mp-nome').value = mp.nome; document.getElementById('mp-keyword').value = mp.keyword;
+            document.getElementById('mp-scorte').value = mp.scorte; idMPInModifica = id;
+            document.getElementById('btn-annulla-mp').style.display = "inline-block";
+        }
+        function resetFormMP() { idMPInModifica = null; document.getElementById('mp-nome').value = ""; document.getElementById('mp-keyword').value = ""; document.getElementById('mp-scorte').value = "50"; document.getElementById('btn-annulla-mp').style.display = "none"; }
+        function eliminaMateriaPrima(id) { if(confirm("Rimuovere la voce?")) { magazzinoMateriePrime = magazzinoMateriePrime.filter(x => x.id !== id); salvaDatiLocali(); mostraTabellaMagazzinoMP(); } }
+
+        function aggiornaTabellaReportEListino() {
+            const corpoRep = document.getElementById('corpo-report-vendites'); corpoRep.innerHTML = "";
+            Object.keys(storicovendites).forEach(k => { corpoRep.innerHTML += `<tr><td>${k}</td><td>${storicovendites[k].qta}</td><td><strong>${formattaEuro(storicovendites[k].incasso)}</strong></td></tr>`; });
+
+            let c = 0, p = 0;
+            archivioRicevute.forEach(r => r.metodo==='CONTANTI' ? c+=r.totale : p+=r.totale);
+            document.getElementById('fin-contanti').innerText = formattaEuro(c);
+            document.getElementById('fin-pos').innerText = formattaEuro(p);
+            document.getElementById('fin-totale-generale').innerText = formattaEuro(c+p);
+
+            const corpoList = document.getElementById('corpo-tabella-listino'); corpoList.innerHTML = "";
+            databaseMenu.forEach((prod, idx) => {
+                const tr = document.createElement('tr');
+                tr.className = "draggable-row";
+                tr.draggable = true;
+                
+                tr.ondragstart = (e) => gestisciDragStart(idx);
+                tr.ondragover = (e) => e.preventDefault();
+                tr.ondrop = (e) => gestisciDropProdotti(idx);
+
+                tr.innerHTML = `
+                    <td style="text-align:center; font-size:1.1rem; color:var(--text-light)">☰</td>
+                    <td><strong>${prod.nome}</strong></td>
+                    <td>${formattaEuro(prod.prezzo)}</td>
+                    <td><mark style="background:var(--input-bg); border:1px solid var(--border); padding:2px 6px; border-radius:4px;">${prod.categoria.toUpperCase()}</mark></td>
+                    <td>
+                        <button class="btn-mini-azione" onclick="caricaModificaProdotto(${prod.id})">✏️ Modifica</button>
+                        <button class="btn-mini-azione btn-mini-elimina" onclick="eliminaProdottoMenu(${prod.id})">🗑️ Rimuovi</button>
+                    </td>
+                `;
+                corpoList.appendChild(tr);
+            });
+        }
+
+        function caricaModificaProdotto(id) {
+            idProdottoInModifica = id;
+            let prod = databaseMenu.find(p => p.id === id);
+            if (!prod) return;
+            document.getElementById('nuovo-nome').value = prod.nome;
+            document.getElementById('nuovo-prezzo').value = prod.prezzo;
+            document.getElementById('nuova-categoria').value = prod.categoria;
+            
+            document.getElementById('btn-salva-prod').innerText = "Aggiorna";
+            document.getElementById('btn-annulla-prod').style.display = "inline-block";
+        }
+
+        function annullaModificaProdotto() {
+            idProdottoInModifica = null;
+            document.getElementById('nuovo-nome').value = "";
+            document.getElementById('nuovo-prezzo').value = "";
+            document.getElementById('btn-salva-prod').innerText = "Salva";
+            document.getElementById('btn-annulla-prod').style.display = "none";
+        }
+
+        function aggiungiOModificaProdotto() {
+            const nome = document.getElementById('nuovo-nome').value.trim(); const prezzo = parseFloat(document.getElementById('nuovo-prezzo').value);
+            const cat = document.getElementById('nuova-categoria').value; if(!nome || isNaN(prezzo)) return;
+            
+            if(idProdottoInModifica !== null) {
+                // Aggiorna
+                let prod = databaseMenu.find(p => p.id === idProdottoInModifica);
+                if (prod) {
+                    prod.nome = nome;
+                    prod.prezzo = prezzo;
+                    prod.categoria = cat;
+                }
+                showToast("Prodotto aggiornato!");
+            } else {
+                // Aggiungi
+                const maxId = databaseMenu.reduce((max, x) => x.id > max ? x.id : max, 0);
+                databaseMenu.push({ id: maxId + 1, categoria: cat, nome: nome, prezzo: prezzo, attivo: true });
+                showToast("Prodotto aggiunto!");
+            }
+            
+            annullaModificaProdotto();
+            salvaDatiLocali(); 
+            aggiornaTabellaReportEListino();
+        }
+
+        function eliminaProdottoMenu(id) { databaseMenu = databaseMenu.filter(x => x.id !== id); salvaDatiLocali(); aggiornaTabellaReportEListino(); }
+        
+        function aggiornaSelettoreFiltroAdmin() {
+            const sel = document.getElementById('nuova-categoria'); sel.innerHTML = "";
+            elencoCategorie.forEach(cat => { sel.innerHTML += `<option value="${cat.nome}">${cat.nome.toUpperCase()}</option>`; });
+        }
+
+        function esportaInExcelCSV() {
+            if (Object.keys(storicovendites).length === 0 && archivioRicevute.length === 0) {
+                showToast("Nessun dato memorizzato da poter esportare", "error");
+                return;
+            }
+
+            let righeCsv = [];
+            righeCsv.push(["--- RIEPILOGO FINANZIARIO DI CASSA ---"]);
+            let c = 0, p = 0;
+            archivioRicevute.forEach(r => r.metodo==='CONTANTI' ? c+=r.totale : p+=r.totale);
+            righeCsv.push(["Metodo Pagamento", "Totale Incassato (EUR)"]);
+            righeCsv.push(["Contanti", c.toFixed(2)]);
+            righeCsv.push(["POS (Carte)", p.toFixed(2)]);
+            righeCsv.push(["TOTALE GENERALE VENDITE", (c+p).toFixed(2)]);
+            righeCsv.push([]); 
+
+            righeCsv.push(["--- RIEPILOGO ARTICOLI VENDUTI ---"]);
+            righeCsv.push(["Articolo/Prodotto", "Quantita Totale", "Incasso Lordo (EUR)"]);
+            Object.keys(storicovendites).forEach(k => {
+                righeCsv.push([k, storicovendites[k].qta, storicovendites[k].incasso.toFixed(2)]);
+            });
+            righeCsv.push([]); 
+
+            righeCsv.push(["--- REGISTRO CRONOLOGICO RICEVUTE ---"]);
+            righeCsv.push(["ID Ricevuta", "Data e Ora Transazione", "Riferimento Tavolo/Cliente", "Metodo", "Composizione Ordine", "Importo Lordo (EUR)"]);
+            
+            let archivioOrdinato = [...archivioRicevute].reverse();
+            archivioOrdinato.forEach(r => {
+                righeCsv.push([
+                    r.id,
+                    r.data,
+                    r.tavolo.replace(/;/g, ","), 
+                    r.metodo,
+                    `"${r.articoli.replace(/"/g, '""')}"`, 
+                    r.totale.toFixed(2)
+                ]);
+            });
+
+            let contenutoCsv = righeCsv.map(e => e.join(";")).join("\n");
+            let blob = new Blob(["\ufeff" + contenutoCsv], { type: "text/csv;charset=utf-8;" });
+            let url = URL.createObjectURL(blob);
+            
+            let link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", `Report_Chiusura_Completo_${new Date().toISOString().split('T')[0]}.csv`);
+            
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(url);
+            
+            showToast("Report completo esportato con successo!");
+        }
+
+        function esportaBackupIntero() {
+            const backup = { 
+                categories: elencoCategorie, 
+                magazzino: magazzinoMateriePrime, 
+                menu: databaseMenu, 
+                vendite: storicovendites, 
+                ricevute: archivioRicevute, 
+                contatore: contatoreRicevute,
+                intestazione: testoIntestazionePredefinito
+            };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backup));
+            const dl = document.createElement('a'); dl.setAttribute("href", dataStr); dl.setAttribute("download", `BACKUP.json`);
+            document.body.appendChild(dl); dl.click(); dl.remove();
+        }
+
+        function importaBackupIntero(input) {
+            const file = input.files[0]; if (!file) return;
+            const lettore = new FileReader();
+            lettore.onload = function(e) {
+                try {
+                    const d = JSON.parse(e.target.result);
+                    if(d.categories && d.magazzino && d.menu) {
+                        elencoCategorie = d.categories; magazzinoMateriePrime = d.magazzino; databaseMenu = d.menu;
+                        storicovendites = d.vendite || {}; archivioRicevute = d.ricevute || []; contatoreRicevute = d.contatore || 1;
+                        if(d.intestazione) testoIntestazionePredefinito = d.intestazione;
+                        salvaDatiLocali(); cambiaFinestra('CASSA'); showToast("Ripristinato!");
+                    }
+                } catch(x) { showToast("File corrotto!", "error"); }
+            };
+            lettore.readAsText(file);
+        }
+
+        function confermaAzzeraTutto() {
+            if(confirm("Azzerare i report giornalieri? Questo svuoterà il registro cassa corrente.")) {
+                archivioRicevute = []; storicovendites = {}; salvaDatiLocali(); aggiornaTabellaReportEListino();
+            }
+        }
+
+        function salvaDatiLocali() {
+            localStorage.setItem('sc_cat_v13', JSON.stringify(elencoCategorie));
+            localStorage.setItem('sc_mp_v13', JSON.stringify(magazzinoMateriePrime));
+            localStorage.setItem('sc_menu_v13', JSON.stringify(databaseMenu));
+            localStorage.setItem('sc_vend_v13', JSON.stringify(storicovendites));
+            localStorage.setItem('sc_ric_v13', JSON.stringify(archivioRicevute));
+            localStorage.setItem('sc_cont_v13', contatoreRicevute.toString());
+            localStorage.setItem('sc_intest_v13', testoIntestazionePredefinito);
+        }
+
+        function caricaDatiLocali() {
+            if (localStorage.getItem('sc_cat_v13')) elencoCategorie = JSON.parse(localStorage.getItem('sc_cat_v13'));
+            if (localStorage.getItem('sc_mp_v13')) magazzinoMateriePrime = JSON.parse(localStorage.getItem('sc_mp_v13'));
+            if (localStorage.getItem('sc_menu_v13')) databaseMenu = JSON.parse(localStorage.getItem('sc_menu_v13'));
+            if (localStorage.getItem('sc_vend_v13')) storicovendites = JSON.parse(localStorage.getItem('sc_vend_v13'));
+            if (localStorage.getItem('sc_ric_v13')) archivioRicevute = JSON.parse(localStorage.getItem('sc_ric_v13'));
+            if (localStorage.getItem('sc_cont_v13')) contatoreRicevute = parseInt(localStorage.getItem('sc_cont_v13')) || 1;
+            if (localStorage.getItem('sc_intest_v13')) testoIntestazionePredefinito = localStorage.getItem('sc_intest_v13');
+        }
+
+        window.onload = () => { caricaDatiLocali(); cambiaFinestra('CASSA'); };
+    </script>
+</body>
+</html>
