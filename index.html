@@ -1974,6 +1974,7 @@
         // =========================================================================
         let comandeRemoteInAttesa = [];
         let clientMqttCassa = null;
+        let cassaAudioCtx = null; // Contesto audio globale persistente
 
         function attivaRicezioneMqttPalmari() {
             if(clientMqttCassa) clientMqttCassa.end();
@@ -2004,13 +2005,8 @@
                     if (comandaArrivata && comandaArrivata.tavolo && Array.isArray(comandaArrivata.articoli)) {
                         comandeRemoteInAttesa.push(comandaArrivata);
                         
-                        // Riproduci suono di notifica
-                        if (window.AudioContext || window.webkitAudioContext) {
-                            let ctx = new (window.AudioContext || window.webkitAudioContext)();
-                            let osc = ctx.createOscillator();
-                            osc.connect(ctx.destination);
-                            osc.start(); osc.stop(ctx.currentTime + 0.15);
-                        }
+                        // 🔊 ADESSO IL SUONO PARTE IMMEDIATAMENTE SUL CANALE PRE-AUTORIZZATO ALL'AVVIO
+                        window.riproduciSuonoNotificaCassa();
                         
                         aggiornaBarraNotifichePalmari();
                     }
@@ -2032,7 +2028,7 @@
             }
         }
 
-        function aggiornaBarraNotifichePalmari() {
+       function aggiornaBarraNotifichePalmari() {
             const box = document.getElementById('box-notifiche-palmari');
             const scroller = document.getElementById('scroller-comande-remote');
             const badge = document.getElementById('conteggio-remote-badge');
@@ -2052,15 +2048,25 @@
                 if(riepilogoTesto.length > 50) riepilogoTesto = riepilogoTesto.substring(0, 47) + '...';
                 
                 return `
-                    <div onclick="caricaComandaRemotaInScontrino(${idx})" style="background: white; border: 1px solid #e2e8f0; border-left: 4px solid #f59e0b; padding: 0.6rem 0.8rem; border-radius: 10px; font-size: 0.8rem; min-width: 210px; cursor: pointer; display: flex; flex-direction: column; gap: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); color:#0f172a;">
-                        <strong style="font-weight:700;">📍 Tavolo: ${c.tavolo.toUpperCase()}</strong>
-                        <span style="color: #475569; font-size: 0.72rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${riepilogoTesto}</span>
+                    <div style="background: white; border: 1px solid #e2e8f0; border-left: 4px solid #f59e0b; padding: 0.5rem; border-radius: 10px; font-size: 0.8rem; min-width: 240px; display: flex; align-items: center; justify-content: space-between; gap: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); color:#0f172a;">
+                        <div onclick="caricaComandaRemotaInScontrino(${idx})" style="cursor: pointer; flex: 1; display: flex; flex-direction: column; gap: 2px;">
+                            <strong style="font-weight:700;">📍 Tavolo: ${c.tavolo.toUpperCase()}</strong>
+                            <span style="color: #475569; font-size: 0.72rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${riepilogoTesto}</span>
+                        </div>
+                        <button onclick="rifiutaComandaRemota(${idx})" style="background: #fee2e2; color: #ef4444; border: 1px solid #fca5a5; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; transition: all 0.2s;" title="Elimina Comanda">🗑️</button>
                     </div>
                 `;
             }).join('');
         }
 
         window.caricaComandaRemotaInScontrino = function(index) {
+            if (comandaAttuale.length > 0) {
+                const conferma = confirm("⚠️ Attenzione! C'è già un ordine in corso in cassa.\n\nVuoi davvero sovrascriverlo e perderlo per caricare l'ordine dal palmare?");
+                if (!conferma) {
+                    return;
+                }
+            }
+
             const comandaRemota = comandeRemoteInAttesa[index];
             if(!comandaRemota) return;
             
@@ -2088,8 +2094,126 @@
             if(typeof showToast === 'function') showToast(`Caricata comanda: ${comandaRemota.tavolo.toUpperCase()}`);
         };
 
+        window.rifiutaComandaRemota = function(index) {
+            const conferma = confirm("Vuoi davvero eliminate questa comanda in arrivo dal palmare senza caricarla?");
+            if (conferma) {
+                comandeRemoteInAttesa.splice(index, 1);
+                aggiornaBarraNotifichePalmari();
+                if(typeof showToast === 'function') showToast("Comanda del palmare eliminata.", "error");
+            }
+        };
+
+        // 🔊 COMPONENTE AUDIO AD ALTA EFFICIENZA CON NOTIFICA "DIN-DON" REALE
+        window.riproduciSuonoNotificaCassa = function() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+
+                if (!cassaAudioCtx) {
+                    cassaAudioCtx = new AudioContext();
+                }
+
+                if (cassaAudioCtx.state === 'suspended') {
+                    cassaAudioCtx.resume();
+                }
+
+                const ctx = cassaAudioCtx;
+                
+                // Nota 1 (Campanello principale alto)
+                const osc1 = ctx.createOscillator();
+                const gain1 = ctx.createGain();
+                osc1.type = 'sine';
+                osc1.frequency.setValueAtTime(880, ctx.currentTime); // La5 molto nitido
+                gain1.gain.setValueAtTime(0.35, ctx.currentTime);
+                gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+                osc1.connect(gain1);
+                gain1.connect(ctx.destination);
+                osc1.start();
+                osc1.stop(ctx.currentTime + 0.4);
+
+                // Nota 2 (Armonica accoppiata dopo 0.08s per effetto Din-Don reale)
+                setTimeout(() => {
+                    try {
+                        if (ctx.state === 'suspended') return;
+                        const osc2 = ctx.createOscillator();
+                        const gain2 = ctx.createGain();
+                        osc2.type = 'sine';
+                        osc2.frequency.setValueAtTime(1174.66, ctx.currentTime); // Re6 squillante ambiente
+                        gain2.gain.setValueAtTime(0.22, ctx.currentTime);
+                        gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+                        osc2.connect(gain2);
+                        gain2.connect(ctx.destination);
+                        osc2.start();
+                        osc2.stop(ctx.currentTime + 0.4);
+                    } catch(e){}
+                }, 80);
+
+            } catch(e) {
+                console.log("Errore audio:", e);
+            }
+        };
+
+        // 🔐 GENERATORE SCHERMATA INTERATTIVA D'AVVIO PER ABILITARE L'AUDIO IMMEDIATAMENTE
+        function creaOverlaySbloccoAudio() {
+            if (document.getElementById('audio-starter-overlay')) return;
+            
+            const overlay = document.createElement('div');
+            overlay.id = 'audio-starter-overlay';
+            overlay.style = "position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(8px); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999999; color: white; text-align: center; padding: 20px; font-family: 'Plus Jakarta Sans', system-ui, sans-serif;";
+            
+            overlay.innerHTML = `
+                <div style="background: #1e293b; padding: 2.5rem; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); max-width: 420px; width: 100%; border: 1px solid #334155; display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+                    <div style="font-size: 3.5rem; animation: cassaPulse 2s infinite;">🛎️</div>
+                    <h2 style="font-size: 1.5rem; font-weight: 800; color: #f8fafc; margin-top: 0.5rem; letter-spacing: -0.02em;">Sblocco Audio Cassa</h2>
+                    <p style="color: #94a3b8; font-size: 0.88rem; line-height: 1.5; margin-bottom: 0.5rem;">I browser moderni bloccano i suoni automatici. Clicca qui sotto per attivare il segnale acustico fin dalla primissima comanda in assoluto.</p>
+                    <button onclick="window.avviaCassaConAudio()" style="background: #10b981; color: white; border: none; width: 100%; padding: 1rem; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4); transition: all 0.2s; letter-spacing: 0.02em;">ABILITA AUDIO E AVVIA CASSA</button>
+                </div>
+                <style>
+                    @keyframes cassaPulse {
+                        0% { transform: scale(1); }
+                        50% { transform: scale(1.1); }
+                        100% { transform: scale(1); }
+                    }
+                </style>
+            `;
+            document.body.appendChild(overlay);
+        }
+
+        window.avviaCassaConAudio = function() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (AudioContext) {
+                    cassaAudioCtx = new AudioContext();
+                    if (cassaAudioCtx.state === 'suspended') {
+                        cassaAudioCtx.resume();
+                    }
+                    
+                    // Emette una micro-nota acustica di feedback reale per validare definitivamente la cassa nel browser
+                    let osc = cassaAudioCtx.createOscillator();
+                    let gain = cassaAudioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(650, cassaAudioCtx.currentTime); 
+                    gain.gain.setValueAtTime(0.05, cassaAudioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, cassaAudioCtx.currentTime + 0.04);
+                    
+                    osc.connect(gain);
+                    gain.connect(cassaAudioCtx.destination);
+                    osc.start(); 
+                    osc.stop(cassaAudioCtx.currentTime + 0.04);
+                    console.log("Scheda Audio attivata e registrata con successo!");
+                }
+            } catch(e) {
+                console.error("Errore inizializzazione audio:", e);
+            }
+            
+            const overlay = document.getElementById('audio-starter-overlay');
+            if (overlay) overlay.remove();
+        };
+
         window.onload = () => {
-            // Imposta campo config ID rete
+            // Forza la creazione della schermata d'attivazione salvavita per i browser
+            creaOverlaySbloccoAudio();
+
             const inputHotspot = document.getElementById('input-hotspot-id');
             if (inputHotspot) inputHotspot.value = STANZA_HOTSPOT_CONDIVISA;
 
