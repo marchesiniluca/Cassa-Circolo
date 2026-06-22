@@ -637,50 +637,55 @@
 
         if(isDarkMode) document.body.classList.add('dark-mode');
         
-        const categoriePredefinite = ["piadine", "panini", "piatti", "bevande", "caffetteria", "cocktail"];
-        const paletteColori = ["#0f172a", "#3b82f6", "#10b981", "#ec4899", "#8b5cf6", "#6366f1", "#14b8a6", "#ef4444"];
+        // 1. Aggiornato l'array delle categorie predefinite
+const categoriePredefinite = ["piadine", "panini", "piatti", "bevande", "caffetteria e amari", "cocktail", "gelati"];
+const paletteColori = ["#0f172a", "#3b82f6", "#10b981", "#ec4899", "#8b5cf6", "#6366f1", "#14b8a6", "#ef4444"];
 
-        function getEmojiPerCategoria(cat) {
-            if (!cat) return '🍽️';
-            if (configCategorie[cat] && configCategorie[cat].icon) {
-                return configCategorie[cat].icon;
-            }
-            const m = {
-                'piadine':'🥙', 'panini':'🍔', 'piatti':'🍝',
-                'bevande':'🥤', 'caffetteria':'☕', 'cocktail':'🍹'
-            };
-            return m[cat.toLowerCase()] || '🍽️';
-        }
+function getEmojiPerCategoria(cat) {
+    if (!cat) return '🍽️';
+    if (configCategorie[cat] && configCategorie[cat].icon) {
+        return configCategorie[cat].icon;
+    }
+    // 2. Aggiornata la chiave per la caffetteria e aggiunta l'emoji per i gelati
+    const m = {
+        'piadine':'🥙', 'panini':'🍔', 'piatti':'🍝',
+        'bevande':'🥤', 'caffetteria e amari':'☕', 'cocktail':'🍹', 'gelati':'🍦'
+    };
+    return m[cat.toLowerCase()] || '🍽️';
+}
 
-        const menuPredefinito = [
-            { id: 1, categoria: "piadine", nome: "Piadina Crudo e Fontina", prezzo: 6.50, attivo: true },
-            { id: 2, categoria: "piadine", nome: "Piadina Cotto e Fontina", prezzo: 6.00, attivo: true },
-            { id: 3, categoria: "piadine", nome: "Piadina Salame e Fontina", prezzo: 6.00, attivo: true },
-            { id: 4, categoria: "piadine", nome: "Piadina Crudo", prezzo: 5.50, attivo: true },
-            { id: 5, categoria: "piadine", nome: "Piadina Cotto", prezzo: 5.00, attivo: true },
-            { id: 6, categoria: "piadine", nome: "Piadina Salame", prezzo: 5.00, attivo: true },
-            { id: 7, categoria: "piadine", nome: "Piadina Salsiccia Cipolla e Peperoni", prezzo: 7.00, attivo: true },
-            { id: 8, categoria: "piadine", nome: "Piadina Stracchino e Rucola", prezzo: 5.50, attivo: true },
-            { id: 9, categoria: "piadine", nome: "Piadina Vuota", prezzo: 3.00, attivo: true },
-            { id: 10, categoria: "panini", nome: "Hamburger Classico", prezzo: 7.50, attivo: true },
-            { id: 11, categoria: "panini", nome: "Cheeseburger", prezzo: 8.00, attivo: true },
-            { id: 12, categoria: "panini", nome: "Hot Dog", prezzo: 4.50, attivo: true },
-            { id: 13, categoria: "piatti", nome: "Cotoletta e Patatine", prezzo: 9.00, attivo: true },
-            { id: 14, categoria: "piatti", nome: "Porzione Patatine Fritte", prezzo: 4.00, attivo: true },
-            { id: 15, categoria: "piatti", nome: "Insalatona sfiziosa", prezzo: 7.50, attivo: true },
-            { id: 16, categoria: "bevande", nome: "Acqua Naturale 50cl", prezzo: 1.50, attivo: true },
-            { id: 17, categoria: "bevande", nome: "Acqua Frizzante 50cl", prezzo: 1.50, attivo: true },
-            { id: 18, categoria: "bevande", nome: "Coca Cola in lattina", prezzo: 2.50, attivo: true },
-            { id: 19, categoria: "bevande", nome: "Fanta / Estathé", prezzo: 2.50, attivo: true },
-            { id: 20, categoria: "bevande", nome: "Birra alla Spina 40cl", prezzo: 4.50, attivo: true },
-            { id: 21, categoria: "bevande", nome: "Birra in Bottiglia", prezzo: 3.50, attivo: true },
-            { id: 25, categoria: "caffetteria", nome: "Caffè Espresso", prezzo: 1.20, attivo: true },
-            { id: 26, categoria: "caffetteria", nome: "Caffè Corretto", prezzo: 2.00, attivo: true },
-            { id: 27, categoria: "caffetteria", nome: "Amaro del Capo", prezzo: 3.00, attivo: true },
-            { id: 22, categoria: "cocktail", nome: "Aperol Spritz", prezzo: 5.00, attivo: true },
-            { id: 23, categoria: "cocktail", nome: "Mojito", prezzo: 6.00, attivo: true },
-            { id: 24, categoria: "cocktail", nome: "Gin Tonic", prezzo: 7.00, attivo: true }
-        ];
+const menuPredefinito = [
+    { id: 1, categoria: "piadine", nome: "Piadina Crudo e Fontina", prezzo: 6.50, attivo: true },
+    { id: 2, categoria: "piadine", nome: "Piadina Cotto e Fontina", prezzo: 6.00, attivo: true },
+    { id: 3, categoria: "piadine", nome: "Piadina Salame e Fontina", prezzo: 6.00, attivo: true },
+    { id: 4, categoria: "piadine", nome: "Piadina Crudo", prezzo: 6.00, attivo: true },
+    { id: 5, categoria: "piadine", nome: "Piadina Cotto", prezzo: 5.50, attivo: true },
+    { id: 6, categoria: "piadine", nome: "Piadina Salame", prezzo: 5.50, attivo: true },
+    { id: 7, categoria: "piadine", nome: "Piadina Salsiccia Cipolla e Peperoni", prezzo: 7.00, attivo: true },
+    { id: 8, categoria: "piadine", nome: "Piadina Stracchino e Rucola", prezzo: 6.00, attivo: true },
+    { id: 9, categoria: "piadine", nome: "Piadina Vuota", prezzo: 1.00, attivo: true },
+    { id: 10, categoria: "piadine", nome: "Piadina Nutella", prezzo: 3.50, attivo: true },
+    { id: 11, categoria: "panini", nome: "Hamburger Cheddar Pomodoro Insalata", prezzo: 9.00, attivo: true },
+    { id: 13, categoria: "piatti", nome: "Cotoletta e Patatine", prezzo: 10.00, attivo: true },
+    { id: 14, categoria: "piatti", nome: "Patatine Fritte", prezzo: 3.50, attivo: true },
+    { id: 16, categoria: "bevande", nome: "Acqua Naturale 50cl", prezzo: 1.00, attivo: true },
+    { id: 17, categoria: "bevande", nome: "Acqua Frizzante 50cl", prezzo: 1.00, attivo: true },
+    { id: 18, categoria: "bevande", nome: "Coca Cola in lattina", prezzo: 3.00, attivo: true },
+    { id: 19, categoria: "bevande", nome: "Fanta in lattina", prezzo: 3.00, attivo: true },
+    { id: 20, categoria: "bevande", nome: "Birra alla Spina 40cl", prezzo: 4.00, attivo: true },
+    { id: 21, categoria: "bevande", nome: "Birra in Bottiglia", prezzo: 3.50, attivo: true },
+    // 3. Modificata la categoria da "caffetteria" a "caffetteria e amari" per questi elementi
+    { id: 25, categoria: "caffetteria e amari", nome: "Caffè Espresso", prezzo: 1.20, attivo: true },
+    { id: 26, categoria: "caffetteria e amari", nome: "Caffè Corretto", prezzo: 1.50, attivo: true },
+    { id: 27, categoria: "caffetteria e amari", nome: "Amari", prezzo: 3.00, attivo: true },
+    { id: 22, categoria: "cocktail", nome: "Aperol Spritz", prezzo: 5.00, attivo: true },
+    { id: 23, categoria: "cocktail", nome: "Mojito", prezzo: 7.00, attivo: true },
+    { id: 24, categoria: "cocktail", nome: "Gin Tonic", prezzo: 7.00, attivo: true },
+    // Nota: Ho corretto l'ID duplicato qui sotto da 25 a 28 per evitare conflitti di chiavi
+    { id: 28, categoria: "cocktail", nome: "Gin Lemon", prezzo: 7.00, attivo: true },
+    { id: 29, categoria: "gelati", nome: "Cornetto", prezzo: 2.50, attivo: true },
+    { id: 30, categoria: "gelati", nome: "Ghiacciolo", prezzo: 1.00, attivo: true }, 
+];
 
         let elencoCategorie = JSON.parse(localStorage.getItem('st_categorie_v7')) || categoriePredefinite;
         let databaseMenu = JSON.parse(localStorage.getItem('st_menu_v7')) || menuPredefinito;
