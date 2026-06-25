@@ -1940,6 +1940,7 @@ const menuPredefinito = [
 
         function showToast(testo, tipo="success") {
             const container = document.getElementById('toast-container');
+            if(!container) return;
             const toast = document.createElement('div');
             toast.className = `toast ${tipo}`;
             toast.innerText = testo;
@@ -2010,7 +2011,7 @@ const menuPredefinito = [
                     if (comandaArrivata && comandaArrivata.tavolo && Array.isArray(comandaArrivata.articoli)) {
                         comandeRemoteInAttesa.push(comandaArrivata);
                         
-                        // 🔊 ADESSO IL SUONO PARTE IMMEDIATAMENTE SUL CANALE PRE-AUTORIZZATO ALL'AVVIO
+                        // 🔊 IL SUONO PARTE IMMEDIATAMENTE SUL CANALE PRE-AUTORIZZATO ALL'AVVIO
                         window.riproduciSuonoNotificaCassa();
                         
                         aggiornaBarraNotifichePalmari();
@@ -2033,7 +2034,7 @@ const menuPredefinito = [
             }
         }
 
-       function aggiornaBarraNotifichePalmari() {
+        function aggiornaBarraNotifichePalmari() {
             const box = document.getElementById('box-notifiche-palmari');
             const scroller = document.getElementById('scroller-comande-remote');
             const badge = document.getElementById('conteggio-remote-badge');
@@ -2046,7 +2047,7 @@ const menuPredefinito = [
             }
 
             box.style.display = 'flex';
-            badge.innerText = `${comandeRemoteInAttesa.length} Pendenti`;
+            if(badge) badge.innerText = `${comandeRemoteInAttesa.length} Pendenti`;
 
             scroller.innerHTML = comandeRemoteInAttesa.map((c, idx) => {
                 let riepilogoTesto = c.articoli.map(a => `${a.quantita}x ${a.nome}`).join(', ');
@@ -2100,7 +2101,7 @@ const menuPredefinito = [
         };
 
         window.rifiutaComandaRemota = function(index) {
-            const conferma = confirm("Vuoi davvero eliminate questa comanda in arrivo dal palmare senza caricarla?");
+            const conferma = confirm("Vuoi davvero eliminare questa comanda in arrivo dal palmare senza caricarla?");
             if (conferma) {
                 comandeRemoteInAttesa.splice(index, 1);
                 aggiornaBarraNotifichePalmari();
@@ -2164,24 +2165,50 @@ const menuPredefinito = [
             
             const overlay = document.createElement('div');
             overlay.id = 'audio-starter-overlay';
-            overlay.style = "position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(8px); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999999; color: white; text-align: center; padding: 20px; font-family: 'Plus Jakarta Sans', system-ui, sans-serif;";
+            overlay.style = "position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; z-index: 999999; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; opacity: 0; transition: opacity 0.4s ease;";
             
             overlay.innerHTML = `
-                <div style="background: #1e293b; padding: 2.5rem; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); max-width: 420px; width: 100%; border: 1px solid #334155; display: flex; flex-direction: column; align-items: center; gap: 1rem;">
-                    <div style="font-size: 3.5rem; animation: cassaPulse 2s infinite;">🛎️</div>
-                    <h2 style="font-size: 1.5rem; font-weight: 800; color: #f8fafc; margin-top: 0.5rem; letter-spacing: -0.02em;">Sblocco Audio Cassa</h2>
-                    <p style="color: #94a3b8; font-size: 0.88rem; line-height: 1.5; margin-bottom: 0.5rem;">I browser moderni bloccano i suoni automatici. Clicca qui sotto per attivare il segnale acustico fin dalla primissima comanda in assoluto.</p>
-                    <button onclick="window.avviaCassaConAudio()" style="background: #10b981; color: white; border: none; width: 100%; padding: 1rem; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4); transition: all 0.2s; letter-spacing: 0.02em;">ABILITA AUDIO E AVVIA CASSA</button>
+                <div id="card-avvio-cassa" style="background: #ffffff; color: #0f172a; padding: 3rem 2.5rem; border-radius: 20px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.4); max-width: 440px; width: 90%; border: 1px solid rgba(255, 255, 255, 0.1); transform: translateY(20px); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; align-items: center;">
+                    <div style="width: 64px; height: 64px; background: #f1f5f9; color: #0f172a; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; font-size: 1.6rem; animation: cassaPulse 2s infinite;">💼</div>
+                    <h2 style="margin: 0 0 0.75rem 0; font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em; color: #0f172a;">Avvio Applicazione</h2>
+                    <p style="color: #64748b; font-size: 0.95rem; line-height: 1.6; margin: 0 0 2rem 0; font-weight: 400;">Inizializzazione del sistema gestionale in corso. Premere il pulsante sottostante per autenticare la sessione e abilitare i moduli audio di notifica.</p>
+                    <button id="btn-inizializza-cassa" onclick="window.avviaCassaConAudio()" style="background: #0f172a; color: #ffffff; border: none; padding: 1rem; font-size: 1rem; font-weight: 600; border-radius: 12px; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.5rem; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15); transition: all 0.2s ease; letter-spacing: 0.01em;">
+                        <span>Inizia Sessione</span>
+                        <span style="font-size: 0.9rem; opacity: 0.7;">→</span>
+                    </button>
                 </div>
                 <style>
                     @keyframes cassaPulse {
                         0% { transform: scale(1); }
-                        50% { transform: scale(1.1); }
+                        50% { transform: scale(1.06); }
                         100% { transform: scale(1); }
                     }
                 </style>
             `;
+            
             document.body.appendChild(overlay);
+
+            // Trigger animazione ingresso (Fade-in + Slide-up)
+            setTimeout(() => {
+                overlay.style.opacity = '1';
+                const card = document.getElementById('card-avvio-cassa');
+                if (card) card.style.transform = 'translateY(0)';
+            }, 50);
+
+            // Effetti hover dinamici professionali per il pulsante
+            const btn = overlay.querySelector('#btn-inizializza-cassa');
+            if (btn) {
+                btn.onmouseenter = () => {
+                    btn.style.background = '#1e293b';
+                    btn.style.transform = 'translateY(-1px)';
+                    btn.style.boxShadow = '0 6px 20px rgba(15, 23, 42, 0.2)';
+                };
+                btn.onmouseleave = () => {
+                    btn.style.background = '#0f172a';
+                    btn.style.transform = 'translateY(0)';
+                    btn.style.boxShadow = '0 4px 12px rgba(15, 23, 42, 0.15)';
+                };
+            }
         }
 
         window.avviaCassaConAudio = function() {
@@ -2212,8 +2239,28 @@ const menuPredefinito = [
             }
             
             const overlay = document.getElementById('audio-starter-overlay');
-            if (overlay) overlay.remove();
+            const card = document.getElementById('card-avvio-cassa');
+            if (overlay) {
+                overlay.style.opacity = '0';
+                if (card) card.style.transform = 'translateY(-15px)';
+                setTimeout(() => {
+                    overlay.remove();
+                }, 400);
+            }
         };
+
+        // Blocco salvavita: intercetta la chiusura o il ricaricamento accidentale della pagina
+        window.addEventListener('beforeunload', (event) => {
+            const corpoComanda = document.getElementById('corpo-comanda');
+            // Verifica se nel contenitore grafico della comanda sono presenti elementi attivi
+            const haArticoli = corpoComanda && corpoComanda.querySelector('.item-comanda');
+            
+            if (haArticoli) {
+                event.preventDefault();
+                // Questo valore attiva la finestra di dialogo standard del browser
+                event.returnValue = 'Ci sono articoli nella comanda corrente. Sicuro di voler uscire?';
+            }
+        });
 
         window.onload = () => {
             // Forza la creazione della schermata d'attivazione salvavita per i browser
@@ -2236,7 +2283,8 @@ const menuPredefinito = [
         };
 
         setInterval(() => {
-            document.getElementById('data-ora').innerText = new Date().toLocaleTimeString('it-IT');
+            const elData = document.getElementById('data-ora');
+            if (elData) elData.innerText = new Date().toLocaleTimeString('it-IT');
         }, 1000);
     </script>
 </body>
