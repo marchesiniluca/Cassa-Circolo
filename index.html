@@ -301,6 +301,7 @@
         }
     </style>
     <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
 </head>
 <body>
 
@@ -637,65 +638,61 @@
 
         if(isDarkMode) document.body.classList.add('dark-mode');
         
-        // 1. Aggiornato l'array delle categorie predefinite
-const categoriePredefinite = ["piadine", "panini", "piatti", "bevande", "caffetteria e amari", "cocktail", "gelati"];
-const paletteColori = ["#0f172a", "#3b82f6", "#10b981", "#ec4899", "#8b5cf6", "#6366f1", "#14b8a6", "#ef4444"];
+        const categoriePredefinite = ["piadine", "panini", "piatti", "bevande", "caffetteria e amari", "cocktail", "gelati"];
+        const paletteColori = ["#0f172a", "#3b82f6", "#10b981", "#ec4899", "#8b5cf6", "#6366f1", "#14b8a6", "#ef4444"];
 
-function getEmojiPerCategoria(cat) {
-    if (!cat) return '🍽️';
-    if (configCategorie[cat] && configCategorie[cat].icon) {
-        return configCategorie[cat].icon;
-    }
-    // 2. Aggiornata la chiave per la caffetteria e aggiunta l'emoji per i gelati
-    const m = {
-        'piadine':'🥙', 'panini':'🍔', 'piatti':'🍝',
-        'bevande':'🥤', 'caffetteria e amari':'☕', 'cocktail':'🍹', 'gelati':'🍦'
-    };
-    return m[cat.toLowerCase()] || '🍽️';
-}
+        function getEmojiPerCategoria(cat) {
+            if (!cat) return '🍽️';
+            if (configCategorie[cat] && configCategorie[cat].icon) {
+                return configCategorie[cat].icon;
+            }
+            const m = {
+                'piadine':'🥙', 'panini':'🍔', 'piatti':'🍝',
+                'bevande':'🥤', 'caffetteria e amari':'☕', 'cocktail':'🍹', 'gelati':'🍦'
+            };
+            return m[cat.toLowerCase()] || '🍽️';
+        }
 
-const menuPredefinito = [
-    { id: 1, categoria: "piadine", nome: "Piadina Crudo e Fontina", prezzo: 6.50, attivo: true },
-    { id: 2, categoria: "piadine", nome: "Piadina Cotto e Fontina", prezzo: 6.00, attivo: true },
-    { id: 3, categoria: "piadine", nome: "Piadina Salame e Fontina", prezzo: 6.00, attivo: true },
-    { id: 4, categoria: "piadine", nome: "Piadina Crudo", prezzo: 6.00, attivo: true },
-    { id: 5, categoria: "piadine", nome: "Piadina Cotto", prezzo: 5.50, attivo: true },
-    { id: 6, categoria: "piadine", nome: "Piadina Salame", prezzo: 5.50, attivo: true },
-    { id: 7, categoria: "piadine", nome: "Piadina Salsiccia Cipolla e Peperoni", prezzo: 7.00, attivo: true },
-    { id: 8, categoria: "piadine", nome: "Piadina Stracchino e Rucola", prezzo: 6.00, attivo: true },
-    { id: 9, categoria: "piadine", nome: "Piadina Vuota", prezzo: 1.00, attivo: true },
-    { id: 10, categoria: "piadine", nome: "Piadina Nutella", prezzo: 3.50, attivo: true },
-    { id: 11, categoria: "panini", nome: "Hamburger Cheddar Pomodoro Insalata", prezzo: 9.00, attivo: true },
-    { id: 13, categoria: "piatti", nome: "Cotoletta e Patatine", prezzo: 10.00, attivo: true },
-    { id: 14, categoria: "piatti", nome: "Patatine Fritte", prezzo: 3.50, attivo: true },
-    { id: 16, categoria: "bevande", nome: "Acqua Naturale 50cl", prezzo: 1.00, attivo: true },
-    { id: 17, categoria: "bevande", nome: "Acqua Frizzante 50cl", prezzo: 1.00, attivo: true },
-    { id: 18, categoria: "bevande", nome: "Coca Cola in lattina", prezzo: 3.00, attivo: true },
-    { id: 19, categoria: "bevande", nome: "Fanta in lattina", prezzo: 3.00, attivo: true },
-    { id: 20, categoria: "bevande", nome: "Birra alla Spina 40cl", prezzo: 4.00, attivo: true },
-    { id: 21, categoria: "bevande", nome: "Birra in Bottiglia", prezzo: 3.50, attivo: true },
-    // 3. Modificata la categoria da "caffetteria" a "caffetteria e amari" per questi elementi
-    { id: 25, categoria: "caffetteria e amari", nome: "Caffè Espresso", prezzo: 1.20, attivo: true },
-    { id: 26, categoria: "caffetteria e amari", nome: "Caffè Corretto", prezzo: 1.50, attivo: true },
-    { id: 27, categoria: "caffetteria e amari", nome: "Amari", prezzo: 3.00, attivo: true },
-    { id: 22, categoria: "cocktail", nome: "Aperol Spritz", prezzo: 5.00, attivo: true },
-    { id: 23, categoria: "cocktail", nome: "Mojito", prezzo: 7.00, attivo: true },
-    { id: 24, categoria: "cocktail", nome: "Gin Tonic", prezzo: 7.00, attivo: true },
-    // Nota: Ho corretto l'ID duplicato qui sotto da 25 a 28 per evitare conflitti di chiavi
-    { id: 28, categoria: "cocktail", nome: "Gin Lemon", prezzo: 7.00, attivo: true },
-    { id: 29, categoria: "gelati", nome: "Cornetto", prezzo: 2.50, attivo: true },
-    { id: 30, categoria: "gelati", nome: "Ghiacciolo", prezzo: 1.00, attivo: true }, 
-];
+        const menuPredefinito = [
+            { id: 1, categoria: "piadine", nome: "Piadina Crudo e Fontina", prezzo: 6.50, attivo: true },
+            { id: 2, categoria: "piadine", nome: "Piadina Cotto e Fontina", prezzo: 6.00, attivo: true },
+            { id: 3, categoria: "piadine", nome: "Piadina Salame e Fontina", prezzo: 6.00, attivo: true },
+            { id: 4, categoria: "piadine", nome: "Piadina Crudo", prezzo: 6.00, attivo: true },
+            { id: 5, categoria: "piadine", nome: "Piadina Cotto", prezzo: 5.50, attivo: true },
+            { id: 6, categoria: "piadine", nome: "Piadina Salame", prezzo: 5.50, attivo: true },
+            { id: 7, categoria: "piadine", nome: "Piadina Salsiccia Cipolla e Peperoni", prezzo: 7.00, attivo: true },
+            { id: 8, categoria: "piadine", nome: "Piadina Stracchino e Rucola", prezzo: 6.00, attivo: true },
+            { id: 9, categoria: "piadine", nome: "Piadina Vuota", prezzo: 1.00, attivo: true },
+            { id: 10, categoria: "piadine", nome: "Piadina Nutella", prezzo: 3.50, attivo: true },
+            { id: 11, categoria: "panini", nome: "Hamburger Cheddar Pomodoro Insalata", prezzo: 9.00, attivo: true },
+            { id: 13, categoria: "piatti", nome: "Cotoletta e Patatine", prezzo: 10.00, attivo: true },
+            { id: 14, categoria: "piatti", nome: "Patatine Fritte", prezzo: 3.50, attivo: true },
+            { id: 16, categoria: "bevande", nome: "Acqua Naturale 50cl", prezzo: 1.00, attivo: true },
+            { id: 17, categoria: "bevande", nome: "Acqua Frizzante 50cl", prezzo: 1.00, attivo: true },
+            { id: 18, categoria: "bevande", nome: "Coca Cola in lattina", prezzo: 3.00, attivo: true },
+            { id: 19, categoria: "bevande", nome: "Fanta in lattina", prezzo: 3.00, attivo: true },
+            { id: 20, categoria: "bevande", nome: "Birra alla Spina 40cl", prezzo: 4.00, attivo: true },
+            { id: 21, categoria: "bevande", nome: "Birra in Bottiglia", prezzo: 3.50, attivo: true },
+            { id: 25, categoria: "caffetteria e amari", nome: "Caffè Espresso", prezzo: 1.20, attivo: true },
+            { id: 26, categoria: "caffetteria e amari", nome: "Caffè Corretto", prezzo: 1.50, attivo: true },
+            { id: 27, categoria: "caffetteria e amari", nome: "Amari", prezzo: 3.00, attivo: true },
+            { id: 22, categoria: "cocktail", nome: "Aperol Spritz", prezzo: 5.00, attivo: true },
+            { id: 23, categoria: "cocktail", nome: "Mojito", prezzo: 7.00, attivo: true },
+            { id: 24, categoria: "cocktail", nome: "Gin Tonic", prezzo: 7.00, attivo: true },
+            { id: 28, categoria: "cocktail", nome: "Gin Lemon", prezzo: 7.00, attivo: true },
+            { id: 29, categoria: "gelati", nome: "Cornetto", prezzo: 2.50, attivo: true },
+            { id: 30, categoria: "gelati", nome: "Ghiacciolo", prezzo: 1.00, attivo: true }, 
+        ];
 
-        let elencoCategorie = JSON.parse(localStorage.getItem('st_categorie_v7')) || categoriePredefinite;
-        let databaseMenu = JSON.parse(localStorage.getItem('st_menu_v7')) || menuPredefinito;
-        let storicovendite = JSON.parse(localStorage.getItem('st_vendite_v7')) || {};
-        let archivioRicevute = JSON.parse(localStorage.getItem('st_ricevute_log_v7')) || [];
-        let storicoChiusure = JSON.parse(localStorage.getItem('st_chiusure_storico_v7')) || [];
-        let contatoreRicevute = parseInt(localStorage.getItem('st_contatore_v7')) || 1;
+        let elencoCategorie = categoriePredefinite;
+        let databaseMenu = menuPredefinito;
+        let storicovendite = {};
+        let archivioRicevute = [];
+        let storicoChiusure = [];
+        let contatoreRicevute = 1;
 
-        let configCategorie = JSON.parse(localStorage.getItem('st_config_categorie_v7')) || {};
-        let databaseMagazzino = JSON.parse(localStorage.getItem('st_magazzino_v7')) || [];
+        let configCategorie = {};
+        let databaseMagazzino = [];
         let antepreminaAttiva = localStorage.getItem('st_antepremina_attiva') === 'true';
 
         let comandaAttuale = [];
@@ -825,9 +822,9 @@ const menuPredefinito = [
             });
         }
 
-        function forzaResetCategorieNuove() {
-            localStorage.removeItem('st_categorie_v7');
-            localStorage.removeItem('st_menu_v7');
+        async function forzaResetCategorieNuove() {
+            await localforage.removeItem('st_categorie_v7');
+            await localforage.removeItem('st_menu_v7');
             elencoCategorie = [...categoriePredefinite];
             databaseMenu = [...menuPredefinito];
             salvaDatiLocali();
@@ -1039,7 +1036,7 @@ const menuPredefinito = [
             document.getElementById('num-tavolo').value = '';
             if (!mantieniIntestazione) {
                 document.getElementById('intestazione-ricevuta').value = '';
-                localStorage.setItem('st_intestazione_fissa_v7', '');
+                localforage.removeItem('st_intestazione_fissa_v7');
             }
             document.getElementById('valore-sconto').value = '0';
             idRicevutaInModifica = null;
@@ -1908,23 +1905,63 @@ const menuPredefinito = [
             inizializzaBancoVendita();
         }
 
-        function salvaDatiLocali() {
-            localStorage.setItem('st_categorie_v7', JSON.stringify(elencoCategorie));
-            localStorage.setItem('st_menu_v7', JSON.stringify(databaseMenu));
-            localStorage.setItem('st_vendite_v7', JSON.stringify(storicovendite));
-            localStorage.setItem('st_ricevute_log_v7', JSON.stringify(archivioRicevute));
-            localStorage.setItem('st_chiusure_storico_v7', JSON.stringify( storicoChiusure ));
-            localStorage.setItem('st_contatore_v7', contatoreRicevute);
-            localStorage.setItem('st_config_categorie_v7', JSON.stringify(configCategorie));
-            localStorage.setItem('st_magazzino_v7', JSON.stringify(databaseMagazzino));
-            
-            const elInt = document.getElementById('intestazione-ricevuta');
-            if(elInt) {
-                localStorage.setItem('st_intestazione_fissa_v7', elInt.value);
-            }
+        async function salvaDatiLocali() {
+            try {
+                await localforage.setItem('st_categorie_v7', elencoCategorie);
+                await localforage.setItem('st_menu_v7', databaseMenu);
+                await localforage.setItem('st_vendite_v7', storicovendite);
+                await localforage.setItem('st_ricevute_log_v7', archivioRicevute);
+                await localforage.setItem('st_chiusure_storico_v7', storicoChiusure);
+                await localforage.setItem('st_contatore_v7', contatoreRicevute);
+                await localforage.setItem('st_config_categorie_v7', configCategorie);
+                await localforage.setItem('st_magazzino_v7', databaseMagazzino);
+                
+                const elInt = document.getElementById('intestazione-ricevuta');
+                if(elInt) {
+                    await localforage.setItem('st_intestazione_fissa_v7', elInt.value);
+                }
 
-            // --- MQTT: TRASMETTI IL MENU AGGIORNATO AI PALMARI ---
-            inviaConfigurazioneAPalmari();
+                inviaConfigurazioneAPalmari();
+            } catch (err) {
+                console.error("Errore durante il salvataggio dei dati nel database:", err);
+                showToast("Errore di salvataggio dati", "error");
+            }
+        }
+
+        async function inizializzaDatabase() {
+            try {
+                const cat = await localforage.getItem('st_categorie_v7');
+                if (cat) elencoCategorie = cat;
+                
+                const menu = await localforage.getItem('st_menu_v7');
+                if (menu) databaseMenu = menu;
+                
+                const vendite = await localforage.getItem('st_vendite_v7');
+                if (vendite) storicovendite = vendite;
+                
+                const ricevute = await localforage.getItem('st_ricevute_log_v7');
+                if (ricevute) archivioRicevute = ricevute;
+                
+                const chiusure = await localforage.getItem('st_chiusure_storico_v7');
+                if (chiusure) storicoChiusure = chiusure;
+                
+                const contatore = await localforage.getItem('st_contatore_v7');
+                if (contatore) contatoreRicevute = contatore;
+                
+                const configCat = await localforage.getItem('st_config_categorie_v7');
+                if (configCat) configCategorie = configCat;
+                
+                const magazzino = await localforage.getItem('st_magazzino_v7');
+                if (magazzino) databaseMagazzino = magazzino;
+
+                disegnaTabsCategoriaBanco();
+                inizializzaBancoVendita();
+                aggiornaInterfacciaComanda();
+                
+                console.log("Database Inizializzato con successo");
+            } catch (err) {
+                console.error("Errore di lettura dal database:", err);
+            }
         }
 
         // --- SALVA E CAMBIA HOTSPOT DALLA CASSA ---
@@ -1984,7 +2021,7 @@ const menuPredefinito = [
 
         function attivaRicezioneMqttPalmari() {
             if(clientMqttCassa) clientMqttCassa.end();
-            clientMqttCassa = mqtt.connect('wss://broker.hivemq.com:8884/mqtt');
+            clientMqttCassa = mqtt.connect('wss://broker.emqx.io:8084/mqtt');
 
             clientMqttCassa.on('connect', () => {
                 console.log("SmartCassa accoppiata alla rete hotspot e in ascolto.");
@@ -2270,16 +2307,20 @@ const menuPredefinito = [
             if (inputHotspot) inputHotspot.value = STANZA_HOTSPOT_CONDIVISA;
 
             attivaRicezioneMqttPalmari();
-            const savedInt = localStorage.getItem('st_intestazione_fissa_v7');
-            if(savedInt && document.getElementById('intestazione-ricevuta')) {
-                document.getElementById('intestazione-ricevuta').value = savedInt;
-            }
+            
+            // Attendo che localforage carichi l'intestazione
+            localforage.getItem('st_intestazione_fissa_v7').then(savedInt => {
+                if(savedInt && document.getElementById('intestazione-ricevuta')) {
+                    document.getElementById('intestazione-ricevuta').value = savedInt;
+                }
+            });
+
             cambiaFinestra('CASSA');
             aggiornaInterfacciaFormatoStampa();
             aggiornaIconaAnteprima();
-            disegnaTabsCategoriaBanco();
-            inizializzaBancoVendita();
-            aggiornaInterfacciaComanda();
+            
+            // Avvio il caricamento asincrono del database
+            inizializzaDatabase();
         };
 
         setInterval(() => {
